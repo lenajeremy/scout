@@ -15,6 +15,8 @@ export function RequestParametersForm() {
         name: 'params',
     })
 
+    const url = useWatch<RequestFormType>({ control, name: 'url' })
+
     return (
         <div className='my-4 space-y-2'>
             {fields.map((field, i) => <ParamsRow i={i} key={field.id} />)}
@@ -29,7 +31,7 @@ function ParamsRow({ i }: { i: number }) {
 
     const { control, register, setValue, getValues } = useFormContext<RequestFormType>()
 
-    const watch = useWatch<RequestFormType>({ name: `params.${i}`, control })
+    const paramRow = useWatch<RequestFormType>({ name: `params.${i}`, control })
 
     React.useEffect(() => {
         if (getValues('url')) {
@@ -47,7 +49,7 @@ function ParamsRow({ i }: { i: number }) {
             setValue('url', newUrl.toString())
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [watch])
+    }, [paramRow])
 
     const deleteRow = () => {
         const allParams = getValues('params')

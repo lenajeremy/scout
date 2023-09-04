@@ -89,9 +89,6 @@ export default function Home() {
     }
   }
 
-
-
-
   return (
     <main className='px-8 py-16 w-1/2 mx-auto'>
       <FormProvider {...formMethods} >
