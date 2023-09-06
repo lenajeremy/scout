@@ -16,8 +16,7 @@ export enum ResponseTypesEnum {
 }
 
 export async function getResponseData<T>(res: Response): Promise<{ type: ResponseTypesEnum, data: T | undefined }> {
-  const contentType = getHeadersFromReq(res)['content-type'];
-  console.log(contentType)
+  const contentType = getHeadersFromReq(res)['content-type'] || '';
 
   let data: T | undefined;
   let type: ResponseTypesEnum = ResponseTypesEnum.json

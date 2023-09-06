@@ -1,7 +1,8 @@
 {
   "name": "invinsyble",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
+  "license": "UNLICENSED",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -39,6 +40,7 @@
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "5.2.2",
+    "uuid": "^9.0.0",
     "yargs": "^17.7.2"
   }
 }

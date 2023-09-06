@@ -7,11 +7,14 @@ import { Label } from './ui/label'
 import { Button } from './ui/button'
 import { PlusIcon, TrashIcon } from '@radix-ui/react-icons'
 import MonacoEditor from '@monaco-editor/react'
+import loader from '@monaco-editor/loader';
+
+loader.config({ paths: { vs: 'http://localhost:3000/min/vs' } });
 
 
-export function RequestBodyForm(props: any) {
+export function RequestBodyForm() {
 
-    const { setValue, watch, register, getValues } = useFormContext<RequestFormType>()
+    const { setValue, watch, getValues } = useFormContext<RequestFormType>()
     const requestBodyType = watch('bodyType')
     const jsonBody = watch('jsonBody')
 
@@ -42,12 +45,12 @@ export function RequestBodyForm(props: any) {
         switch (requestBodyType) {
             case RequestBodyEnum.none:
                 return (
-                    <p className='text-gray-500 text-center text-sm mt-6'>This request has no body</p>
+                    <p className='text-gray-500 text-center text-sm'>This request has no body</p>
                 )
             case RequestBodyEnum.json:
                 return (
                     <MonacoEditor
-                        className='h-48'
+                        className='h-full'
                         defaultLanguage='json'
                         defaultValue={jsonBody}
                         onChange={(value) => setValue('jsonBody', String(value))}
@@ -70,10 +73,11 @@ export function RequestBodyForm(props: any) {
     }
 
 
+
     return (
         <div className='divide-y'>
             <div className='px-4 py-3'>
-                <RadioGroup defaultValue={requestBodyType} className='flex gap-3' onValueChange={(value) => setValue('bodyType', value as RequestBodyEnum)}>
+                <RadioGroup value={requestBodyType} className='flex gap-3' onValueChange={(value) => setValue('bodyType', value as RequestBodyEnum)}>
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value={RequestBodyEnum.none} id="r1" />
                         <Label htmlFor="r1">None</Label>
@@ -92,7 +96,7 @@ export function RequestBodyForm(props: any) {
                     </div>
                 </RadioGroup>
             </div>
-            <div className='py-3'>
+            <div className='py-3 h-48 flex items-center justify-center'>
                 {getBodyComponentFromSelectedType()}
             </div>
         </div>

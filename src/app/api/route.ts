@@ -2,12 +2,13 @@ import { NextRequest, NextResponse, } from "next/server";
 
 
 export async function GET(request: NextRequest) {
-    console.log(typeof request.nextUrl)
-    return NextResponse.json({ request: request.nextUrl, timeSent: new Date() }, { status: 400 })
+    return NextResponse.json({ request: request.nextUrl,...request.json(), timeSent: new Date() }, { status: 200 })
 }
 
 export async function POST(request: NextRequest) {
-    console.log(request.body)
-    console.log(request.nextUrl.searchParams)
-    return NextResponse.json({ ...request.body, timeSent: new Date() }, { status: 200 })
+    const reader = await request.json()
+    
+    // console.log(request.body);
+    
+    return NextResponse.json({ ...reader, timeSent: new Date() }, { status: 200 })
 }

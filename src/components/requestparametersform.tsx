@@ -15,7 +15,7 @@ export function RequestParametersForm() {
         name: 'params',
     })
 
-    const url = useWatch<RequestFormType>({ control, name: 'url' })
+    // const url = useWatch<RequestFormType>({ control, name: 'url' })
 
     return (
         <div className='my-4 space-y-2'>

@@ -40,6 +40,11 @@ export function Select({
     const [open, setOpen] = React.useState(false)
     const [value, setValue] = React.useState(defaultValue || '')
 
+
+    React.useEffect(() => {
+        setValue(defaultValue || "")
+    }, [ defaultValue ])
+
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>

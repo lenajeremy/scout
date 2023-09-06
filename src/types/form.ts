@@ -26,6 +26,7 @@ export type RequestHeadersType = Array<{
 }>
 
 export type RequestFormType = {
+    name: string,
     url: string,
     method: RequestMethod,
     params?: ParamsFormValues,
