@@ -8,6 +8,9 @@ import { Button } from './ui/button'
 import { PlusIcon, TrashIcon } from '@radix-ui/react-icons'
 import MonacoEditor from '@monaco-editor/react'
 import loader from '@monaco-editor/loader';
+import { useTheme } from 'next-themes'
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from './ui/dropdown-menu'
+
 
 loader.config({ paths: { vs: 'http://localhost:3000/min/vs' } });
 
@@ -17,6 +20,7 @@ export function RequestBodyForm() {
     const { setValue, watch, getValues } = useFormContext<RequestFormType>()
     const requestBodyType = watch('bodyType')
     const jsonBody = watch('jsonBody')
+    const { resolvedTheme } = useTheme()
 
     React.useEffect(() => {
         const headers = getValues('headers')
@@ -45,13 +49,16 @@ export function RequestBodyForm() {
         switch (requestBodyType) {
             case RequestBodyEnum.none:
                 return (
-                    <p className='text-gray-500 text-center text-sm'>This request has no body</p>
+                    <div className='flex h-full items-center justify-center'>
+                        <p className='text-sm'>This request has no body</p>
+                    </div>
                 )
             case RequestBodyEnum.json:
                 return (
                     <MonacoEditor
                         className='h-full'
                         defaultLanguage='json'
+                        theme={resolvedTheme === 'dark' ? 'vs-dark' : 'light'}
                         defaultValue={jsonBody}
                         onChange={(value) => setValue('jsonBody', String(value))}
                         options={{ minimap: { enabled: false } }}
@@ -63,7 +70,9 @@ export function RequestBodyForm() {
                 )
             case RequestBodyEnum.binary:
                 return (
-                    <pre>BINARY</pre>
+                    <div className='flex h-full items-center justify-center'>
+                        <p className='text-sm'>This request accept binary body</p>
+                    </div>
                 )
             default:
                 return (
@@ -75,8 +84,8 @@ export function RequestBodyForm() {
 
 
     return (
-        <div className='divide-y'>
-            <div className='px-4 py-3'>
+        <div className='flex flex-col h-full pt-2'>
+            <div className='px-4 pt-2'>
                 <RadioGroup value={requestBodyType} className='flex gap-3' onValueChange={(value) => setValue('bodyType', value as RequestBodyEnum)}>
                     <div className="flex items-center space-x-2">
                         <RadioGroupItem value={RequestBodyEnum.none} id="r1" />
@@ -96,7 +105,10 @@ export function RequestBodyForm() {
                     </div>
                 </RadioGroup>
             </div>
-            <div className='py-3 h-48 flex items-center justify-center'>
+
+            <div className='h-[1px] w-full bg-neutral-200 dark:bg-neutral-700 mt-4' />
+
+            <div className='flex-1 pt-4'>
                 {getBodyComponentFromSelectedType()}
             </div>
         </div>
@@ -108,7 +120,7 @@ const FormDataForm = () => {
     const { fields, append } = useFieldArray<RequestFormType>({ control, name: 'formData' })
 
     return (
-        <div className='space-y-2'>
+        <div className='space-y-2 w-full px-4'>
             {fields.map((field, index) => (
                 <FormDataRow key={field.id} index={index} />
             ))}
@@ -121,27 +133,38 @@ const FormDataForm = () => {
 
 const FormDataRow = ({ index }: { index: number }) => {
 
-    const { register, watch, setValue } = useFormContext<RequestFormType>()
+    const { register, watch, setValue, getValues } = useFormContext<RequestFormType>()
     const rowType = watch(`formData.${index}.type`)
-    const rowValue = watch(`formData.${index}.value`)
+
+    const deleteRow = () => {
+        const formData = getValues('formData')
+        setValue('formData', formData?.filter((_, _i) => _i !== index))
+    }
+
 
     return (
         <div className='grid grid-cols-[1fr,1fr,1fr,36px] gap-2'>
             <div className='relative'>
                 <Input placeholder='Key'  {...register(`formData.${index}.key`)} />
-                <button type='button' className='absolute w-8 h-8 rounded-full right-0 top-1/2 -translate-y-1/2' onClick={() => {
-                    if (rowType === 'text') {
-                        setValue(`formData.${index}.type`, 'file')
-                    } else {
-                        setValue(`formData.${index}.type`, 'text')
-                    }
-                }}>
-                    {rowType.charAt(0).toUpperCase()}
-                </button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className='absolute right-2 h-2/3 w-[48px] top-1/2 -translate-y-1/2'>
+                            <span className='text-[12px] font-normal'>{rowType.charAt(0).toUpperCase() + rowType.slice(1)}</span>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => setValue(`formData.${index}.type`, "text")}>
+                            Text
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setValue(`formData.${index}.type`, "file")}>
+                            File
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
             <Input placeholder='Value' type={rowType} {...register(`formData.${index}.value`)} multiple />
             <Input placeholder='Description' {...register(`formData.${index}.description`)} />
-            <Button type='button' variant='destructive' className='p-0'>
+            <Button type='button' variant='destructive' className='p-0' onClick={deleteRow}>
                 <TrashIcon />
             </Button>
 

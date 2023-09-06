@@ -18,7 +18,7 @@ export function RequestParametersForm() {
     // const url = useWatch<RequestFormType>({ control, name: 'url' })
 
     return (
-        <div className='my-4 space-y-2'>
+        <div className='py-4 space-y-2'>
             {fields.map((field, i) => <ParamsRow i={i} key={field.id} />)}
             <div>
                 <Button type='button' onClick={() => append({ key: '', value: '', description: '' })} className='ml-auto'>Add Row <PlusIcon /></Button>

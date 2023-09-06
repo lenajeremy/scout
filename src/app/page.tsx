@@ -16,6 +16,10 @@ import { RequestHeadersForm } from '@/components/requestheadersform'
 import MonacoEditor from '@monaco-editor/react'
 import { Sidebar } from '@/components/sidebar'
 import { REQUEST_DEFAULT_VALUES, RequestsManagerContext } from '@/contexts/requestsmanager'
+import { useTheme } from 'next-themes'
+import { ModeToggle } from '@/components/ui/theme-switcher'
+import { PlusCircledIcon } from '@radix-ui/react-icons'
+import { v4 as uuid } from 'uuid'
 
 
 const TABS_CLASSNAME = 'w-full overflow-hidden relative data-[state=active]:after:h-[2px] data-[state=active]:after:w-full data-[state=active]:after:bg-black data-[state=active]:after:absolute data-[state=active]:after:bottom-0'
@@ -29,10 +33,10 @@ type WithoutPromise<T> = T extends Promise<infer T> ? T : never
 
 export default function Home() {
 
-  const [responseData, setResponseData] = React.useState<WithoutPromise<ReturnType<typeof getResponseData>>>({ data: '', type: ResponseTypesEnum.json });
+  const [responseData, setResponseData] = React.useState<WithoutPromise<ReturnType<typeof getResponseData>>>({ data: null, type: ResponseTypesEnum.json });
   const [status, setStatus] = React.useState<string>('')
   const [loading, setLoading] = React.useState<boolean>(false);
-  const { saveRequest, activeRequest, initRequests } = React.useContext(RequestsManagerContext)
+  const { saveRequest, activeRequest, initRequests, updateActiveRequest } = React.useContext(RequestsManagerContext)
   const formMethods = useForm<RequestFormType>({
     defaultValues: REQUEST_DEFAULT_VALUES
   })
@@ -41,6 +45,8 @@ export default function Home() {
     const localStoredRequests: Array<RequestFormType> = JSON.parse(localStorage.getItem('requests') || '[]')
     initRequests(localStoredRequests)
   }, [])
+
+  const { resolvedTheme } = useTheme()
 
 
   const makeRequest: SubmitHandler<RequestFormType> = async (data) => {
@@ -103,11 +109,12 @@ export default function Home() {
 
   return (
     <FormProvider {...formMethods} >
-      <div className='grid grid-cols-[250px,_1fr,_72px] py-8 gap-4 w-4/5 mx-auto'>
+      <div className='grid grid-cols-[300px,_1px,_1fr,_1px,_64px] min-h-screen mx-auto'>
         <Sidebar />
-        <main>
-          <form onSubmit={formMethods.handleSubmit(makeRequest)} autoComplete='on'>
-            <div className='flex items-center gap-2 mb-4'>
+        <div className='h-full w-full bg-neutral-200 dark:bg-neutral-700' />
+        <main className='pt-8'>
+          <form onSubmit={formMethods.handleSubmit(makeRequest)} autoComplete='on' className='h-full'>
+            <div className='flex items-center gap-2 px-4'>
               <Select
                 // @ts-ignore
                 options={REQUEST_METHODS}
@@ -140,10 +147,12 @@ export default function Home() {
               }} type='button'>Save</Button>
             </div>
 
+            <div className='h-[1px] w-full bg-neutral-200 dark:bg-neutral-700 my-4' />
+
             <div>
               <Tabs defaultValue="params">
 
-                <TabsList className='w-full'>
+                <TabsList className='mx-4 w-[calc(100%-32px)]'>
                   <TabsTrigger className={TABS_CLASSNAME} value="params">Params</TabsTrigger>
                   <TabsTrigger className={TABS_CLASSNAME} value="body">Body</TabsTrigger>
                   <TabsTrigger className={TABS_CLASSNAME} value="headers">Headers</TabsTrigger>
@@ -151,64 +160,80 @@ export default function Home() {
                   <TabsTrigger className={TABS_CLASSNAME} value='settings'>Settings</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="params">
-                  <RequestParametersForm />
-                </TabsContent>
-                <TabsContent value="body">
-                  <RequestBodyForm />
-                </TabsContent>
-                <TabsContent value="headers">
-                  <RequestHeadersForm />
-                </TabsContent>
-                <TabsContent value="auth">
-                  <h1 className='text-5xl'>Auth</h1>
-                </TabsContent>
-                <TabsContent value="settings">
-                  <h1 className='text-5xl'>Settings</h1>
-                </TabsContent>
+                <div className='h-96 overflow-scroll'>
+                  <TabsContent value="params" className='h-full px-4 m-0'>
+                    <RequestParametersForm />
+                  </TabsContent>
+                  <TabsContent value="body" className='h-full m-0'>
+                    <RequestBodyForm />
+                  </TabsContent>
+                  <TabsContent value="headers" className='h-full px-4'>
+                    <RequestHeadersForm />
+                  </TabsContent>
+                  <TabsContent value="auth" className='h-full px-4'>
+                    <h1 className='text-5xl'>Auth</h1>
+                  </TabsContent>
+                  <TabsContent value="settings" className='h-full px-4'>
+                    <h1 className='text-5xl'>Settings</h1>
+                  </TabsContent>
+                </div>
               </Tabs>
             </div>
 
-            {/* <div className='bg-slate-100 rounded-md p-4 mt-8 relative'> */}
-            <code className='text-[12px] text-right top-2 right-2 opacity-60 w-full block mb-2'>{status}</code>
-            {responseData.type === ResponseTypesEnum.json && (
-              <MonacoEditor
-                className='h-96'
-                defaultLanguage='json'
-                value={JSON.stringify(responseData.data, null, 3)}
-                options={{ minimap: { enabled: false }, readOnly: true, wordWrap: 'on' }}
-              />
-            )}
+            <div className='h-[1px] w-full bg-neutral-200 dark:bg-neutral-700 my-4' />
 
-            {responseData.type === ResponseTypesEnum.audio && (
-              <audio controls src={responseData.data as string} />
-            )}
+            <div className='relative h-96'>
+              <code className='text-[12px] text-right top-0 right-5 opacity-60 w-full block absolute z-50'>{status}</code>
+              {responseData.type === ResponseTypesEnum.json && (
+                <MonacoEditor
+                  className='h-full'
+                  defaultLanguage='json'
+                  theme={resolvedTheme === 'dark' ? 'vs-dark' : 'light'}
+                  value={JSON.stringify(responseData.data, null, 3)}
+                  options={{ minimap: { enabled: false }, readOnly: true, wordWrap: 'on' }}
+                />
+              )}
 
-            {
-              responseData.type === ResponseTypesEnum.html && (
-                <iframe className='w-full h-96' srcDoc={responseData.data as string} />
-              )
-            }
+              {responseData.type === ResponseTypesEnum.audio && (
+                <audio controls src={responseData.data as string} />
+              )}
 
-            {
-              responseData.type === ResponseTypesEnum.text && (
-                <p>{(responseData.data as string)}...</p>
-              )
-            }
+              {
+                responseData.type === ResponseTypesEnum.html && (
+                  <iframe className='w-full h-96' srcDoc={responseData.data as string} />
+                )
+              }
 
-            {responseData.type === ResponseTypesEnum.video && (
-              <video controls src={responseData.data as string} className='w-full h-full' />
-            )}
+              {
+                responseData.type === ResponseTypesEnum.text && (
+                  <p>{(responseData.data as string)}...</p>
+                )
+              }
 
-            {responseData.type === ResponseTypesEnum.image && (
-              <Image src={responseData.data as string} className='w-full h-full object-contain' alt='response image' width={500} height={500} />
-            )}
+              {responseData.type === ResponseTypesEnum.video && (
+                <video controls src={responseData.data as string} className='w-full h-full' />
+              )}
 
-            {/* </div> */}
+              {responseData.type === ResponseTypesEnum.image && (
+                <Image src={responseData.data as string} className='w-full h-full object-contain' alt='response image' width={500} height={500} />
+              )}
+
+            </div>
           </form>
         </main >
 
-        <div className=''></div>
+        <div className='h-full w-full bg-neutral-200 dark:bg-neutral-700' />
+
+        <div className='mt-4 flex flex-col gap-2 ml-4'>
+          <ModeToggle />
+          <Button size={'icon'} className='text-sm' variant={'outline'} onClick={() => {
+            const newRequest = { ...REQUEST_DEFAULT_VALUES, id: uuid() }
+            updateActiveRequest(newRequest)
+            saveRequest(newRequest)
+          }}>
+            <PlusCircledIcon />
+          </Button>
+        </div>
       </div>
     </FormProvider>
   )
