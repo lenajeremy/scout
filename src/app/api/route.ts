@@ -7,8 +7,6 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
     const reader = await request.json()
-    
-    // console.log(request.body);
-    
+        
     return NextResponse.json({ ...reader, timeSent: new Date() }, { status: 200 })
 }

@@ -15,7 +15,7 @@ import { ResponseTypesEnum, getResponseData, prepareHeaders } from '@/lib/utils'
 import { RequestHeadersForm } from '@/components/requestheadersform'
 import MonacoEditor from '@monaco-editor/react'
 import { Sidebar } from '@/components/sidebar'
-import { REQUEST_DEFAULT_VALUES, RequestsManager, RequestsManagerContext } from '@/contexts/requestsmanager'
+import { REQUEST_DEFAULT_VALUES, RequestsManagerContext } from '@/contexts/requestsmanager'
 
 
 const TABS_CLASSNAME = 'w-full overflow-hidden relative data-[state=active]:after:h-[2px] data-[state=active]:after:w-full data-[state=active]:after:bg-black data-[state=active]:after:absolute data-[state=active]:after:bottom-0'
@@ -32,10 +32,15 @@ export default function Home() {
   const [responseData, setResponseData] = React.useState<WithoutPromise<ReturnType<typeof getResponseData>>>({ data: '', type: ResponseTypesEnum.json });
   const [status, setStatus] = React.useState<string>('')
   const [loading, setLoading] = React.useState<boolean>(false);
-  const { addRequest, activeRequest } = React.useContext(RequestsManagerContext)
+  const { saveRequest, activeRequest, initRequests } = React.useContext(RequestsManagerContext)
   const formMethods = useForm<RequestFormType>({
     defaultValues: REQUEST_DEFAULT_VALUES
   })
+
+  React.useEffect(() => {
+    const localStoredRequests: Array<RequestFormType> = JSON.parse(localStorage.getItem('requests') || '[]')
+    initRequests(localStoredRequests)
+  }, [])
 
 
   const makeRequest: SubmitHandler<RequestFormType> = async (data) => {
@@ -130,8 +135,8 @@ export default function Home() {
 
               <Button loading={loading} disabled={loading} type='submit'>Send</Button>
               <Button onClick={() => {
-                const data = formMethods.getValues()
-                addRequest(data)
+                const newRequest = formMethods.getValues()
+                saveRequest(newRequest)
               }} type='button'>Save</Button>
             </div>
 

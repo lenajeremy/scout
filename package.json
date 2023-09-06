@@ -42,5 +42,8 @@
     "typescript": "5.2.2",
     "uuid": "^9.0.0",
     "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.3"
   }
 }

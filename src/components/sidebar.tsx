@@ -1,12 +1,13 @@
-import { REQUEST_DEFAULT_VALUES, RequestsManagerContext } from '@/contexts/requestsmanager'
+import * as React from 'react'
 import { RequestFormType } from '@/types/form'
 import { TrashIcon } from '@radix-ui/react-icons'
-import * as React from 'react'
 import { useFormContext } from 'react-hook-form'
+import { v4 as uuid } from 'uuid'
+import { REQUEST_DEFAULT_VALUES, RequestsManagerContext } from '@/contexts/requestsmanager'
 
 export function Sidebar() {
 
-    const { requests, removeRequest, updateActiveRequest, addRequest } = React.useContext(RequestsManagerContext)
+    const { requests, removeRequest, updateActiveRequest, saveRequest } = React.useContext(RequestsManagerContext)
     const { setValue } = useFormContext<RequestFormType>()
 
     return (
@@ -35,7 +36,7 @@ export function Sidebar() {
             <div className='flex flex-col gap-2'>
                 {
                     requests.map((request, i) => (
-                        <div key={i} className='relative'>
+                        <div key={request.id} className='relative'>
                             <button className='flex items-center gap-2 text-[12px]' onClick={() => updateActiveRequest(request)}>
                                 <span className={`text-green-600 w-10 text-right`}>{request.method.toUpperCase()}</span> {request.name}
                             </button>
@@ -45,7 +46,11 @@ export function Sidebar() {
                         </div>
                     ))
                 }
-                <button onClick={() => addRequest(REQUEST_DEFAULT_VALUES)}>New Request</button>
+                <button onClick={() => {
+                    const newRequest = { ...REQUEST_DEFAULT_VALUES, id: uuid() }
+                    updateActiveRequest(newRequest)
+                    saveRequest(newRequest)
+                }}>New Request</button>
             </div>
 
 
