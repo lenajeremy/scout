@@ -25,6 +25,8 @@ yargs
 
 function runScout(port) {
 
+  console.log('running invinsyble')
+
   try {
     const runApp = spawn("yarn", ["start"]);
 
