@@ -1,4 +1,3 @@
-import { RequestMethod } from "@/constants"
 
 export type ParamsFormValues = Array<{
     key: string,
@@ -25,14 +24,3 @@ export type RequestHeadersType = Array<{
     value: string,
 }>
 
-export type RequestFormType = {
-    id: string,
-    name: string,
-    url: string,
-    method: RequestMethod,
-    params?: ParamsFormValues,
-    formData?: BodyFormData,
-    bodyType: RequestBodyEnum,
-    jsonBody: string,
-    headers: RequestHeadersType
-}

@@ -1,15 +1,16 @@
 import * as React from 'react'
-import { RequestBodyEnum, RequestFormType } from '@/types/form'
-import { v4 as uuid } from 'uuid'
+import { RequestBodyEnum } from '@/types/form'
+import { APIRequest, RequestMethod } from '@/types/collection'
+
 
 
 type RequestsManagerContextType = {
-    requests: RequestFormType[],
-    initRequests: (requests: RequestFormType[]) => void,
-    saveRequest: (request: RequestFormType) => void,
+    requests: APIRequest[],
+    initRequests: (requests: APIRequest[]) => void,
+    saveRequest: (request: APIRequest) => void,
     removeRequest: (index: number) => void,
-    activeRequest: RequestFormType | null,
-    updateActiveRequest: (request: RequestFormType) => void,
+    activeRequest: APIRequest | null,
+    updateActiveRequest: (request: APIRequest) => void,
 }
 export const RequestsManagerContext = React.createContext<RequestsManagerContextType>({
     requests: [],
@@ -20,28 +21,13 @@ export const RequestsManagerContext = React.createContext<RequestsManagerContext
     updateActiveRequest: () => { },
 })
 
-export const REQUEST_DEFAULT_VALUES: RequestFormType = {
-    id: uuid(),
-    name: 'New Request',
-    url: '',
-    method: 'get',
-    params: [{ key: '', value: '', description: '' }],
-    formData: [{ key: '', value: '', description: '', type: 'text' }],
-    bodyType: RequestBodyEnum.none,
-    jsonBody:
-        `{
-
-}`,
-    headers: [{ key: 'Accept', value: '*/*' }]
-}
-
 
 export const RequestsManager: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
-    const [requests, setRequests] = React.useState<RequestFormType[]>([])
-    const [activeRequest, setActiveRequest] = React.useState<RequestFormType>(REQUEST_DEFAULT_VALUES)
+    const [requests, setRequests] = React.useState<APIRequest[]>([])
+    const [activeRequest, setActiveRequest] = React.useState<APIRequest>(REQUEST_DEFAULT_VALUES)
 
-    const saveRequest = (request: RequestFormType) => {
+    const saveRequest = (request: APIRequest) => {
         const index = requests.findIndex(r => r.id === request.id)
         if (index === -1) {
             setRequests([...requests, request])
@@ -54,7 +40,7 @@ export const RequestsManager: React.FC<{ children: React.ReactNode }> = ({ child
         }
     }
 
-    const initRequests = (requests: RequestFormType[]) => {
+    const initRequests = (requests: APIRequest[]) => {
         setRequests(requests)
     }
 
