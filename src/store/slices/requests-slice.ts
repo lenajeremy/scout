@@ -7,8 +7,8 @@ const requestsSlice = createSlice({
     name: 'requestsSlice',
     initialState,
     reducers: {
-        initRequests: (_, action: PayloadAction<Array<Request>>) => {
-            return action.payload;
+        bulkAddRequests: (state, action: PayloadAction<Array<Request>>) => {
+            return [...state, ...action.payload]
         },
         addRequest: (state, action: PayloadAction<Request>) => {
             return [...state, action.payload]
@@ -31,5 +31,5 @@ export const {
     addRequest, 
     deleteRequest,
     editRequest,
-    initRequests
+    bulkAddRequests
 } = requestsSlice.actions

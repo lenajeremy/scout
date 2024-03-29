@@ -1,12 +1,14 @@
-import { Collection, Folder, ResponseTypeEnum, Request } from "@/types/collection";
+import { Collection, Folder, ResponseTypeEnum, Request, RequestMethod, APIRequest } from "@/types/collection";
 import { SidebarCollection, SidebarFolder } from '@/types/sidebar'
-import { RequestHeadersType } from "@/types/form";
+import { RequestBodyEnum, RequestHeadersType } from "@/types/form";
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { AppDispatch } from "@/store";
 import {
   addFolderToCollection, addRequest,
   addRequestToCollection, addRequestToFolder,
+  bulkAddFolders,
+  bulkAddRequests,
   createCollection, createFolder,
   setActiveCollectionAction, setActiveFolderAction
 } from "@/store/actions";
@@ -86,7 +88,7 @@ function buildFolder(folderId: string, f: Folder[], r: Request[]): SidebarFolder
   }
 }
 
-export function buildSidebarStructure(c: Collection[], f: Folder[], r: Request[]) {
+export function buildSidebarStructure(c: Collection[], f: Folder[], r: Request[]): SidebarCollection[] {
   let _collections: SidebarCollection[] = c.map(c => ({
     id: c.id,
     name: c.name,
@@ -108,6 +110,73 @@ export function buildSidebarStructure(c: Collection[], f: Folder[], r: Request[]
   }
 
   return _collections
+}
+
+export function updateStoreFromCollection(postmanJSON: any, dispatch: AppDispatch) {
+  let collection: Collection = {
+    name: postmanJSON.collection.info.name,
+    id: postmanJSON.collection.info._postman_id,
+    variables: postmanJSON.collection.variable || [],
+    folderIds: [],
+    requestIds: []
+  }
+
+  let folders: Folder[] = []
+  let requests: Request[] = []
+
+  postmanJSON.collection.item.forEach((item: any) => {
+    buildItem(item)
+  })
+
+  function buildItem(item: any, folderId = "") {
+    if (item.request && item.response) {
+      let request: Request = {
+        id: item.id,
+        name: item.name,
+        url: item.request.url?.raw || '',
+        method: item.request.method?.toLowerCase() as RequestMethod || RequestMethod.GET,
+        params: item.request.url?.query || [],
+        formData: item.request.body?.formdata?.map((f: any) => ({ key: f.key, type: f.type, value: f.type === 'file' ? f.src : f.value })),
+        bodyType: item.request.body?.mode === 'raw' ? RequestBodyEnum.binary : item.request.body?.mode as RequestBodyEnum || RequestBodyEnum.none,
+        jsonBody: item.request.body?.raw || "",
+        headers: item.request.header.map((h: any) => ({ key: h.key, value: h.value })),
+        collectionId: collection.id,
+        folderId: folderId
+      }
+
+      if (!folderId) {
+        collection.requestIds.push(request.id);
+      } else {
+        folders.find(folder => folder.id === folderId)?.requestIds.push(request.id)
+      }
+
+      requests.push(request)
+    } else {
+      let folder: Folder = {
+        id: item.id,
+        name: item.name,
+        requestIds: [],
+        collectionId: collection.id,
+        subFolderIds: [],
+        parentFolderId: folderId
+      }
+
+      if (!folderId) {
+        collection.folderIds.push(folder.id)
+        console.log(item.name)
+      } else {
+        folders.find(folder => folder.id === folderId)?.subFolderIds.push(folder.id)
+      }
+
+      folders.push(folder)
+
+      item.item.forEach((item: any) => buildItem(item, folder.id))
+    }
+  }
+
+  dispatch(createCollection(collection))
+  dispatch(bulkAddFolders(folders))
+  dispatch(bulkAddRequests(requests))
 }
 
 export function createNewCollection(actor: AppDispatch) {

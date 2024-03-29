@@ -2,21 +2,54 @@ import * as React from 'react'
 import { BackpackIcon } from '@radix-ui/react-icons'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { addRequestTab } from '@/store/actions'
-import { buildSidebarStructure, createNewFolder, createNewRequest, setActiveCollection, setActiveFolder } from '@/lib/utils'
+import { buildSidebarStructure, createNewFolder, createNewRequest, setActiveCollection, setActiveFolder, updateStoreFromCollection } from '@/lib/utils'
 import { SidebarCollection, SidebarFolder } from '@/types/sidebar'
+import { Request } from '@/types/collection'
 import { Button } from './ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog'
+import { Label } from './ui/label'
+import { Input } from './ui/input'
+import { SubmitHandler, useForm } from 'react-hook-form'
 
 export function Sidebar() {
 
     const requests = useAppSelector(store => store.requests)
     const { collections } = useAppSelector(store => store.collections)
     const { folders } = useAppSelector(store => store.folders)
+    const dispatch = useAppDispatch()
 
     const repoStructure = React.useMemo(() => buildSidebarStructure(collections, folders, requests), [collections, folders, requests])
+    const { handleSubmit, register } = useForm<{ collectionUrl: string, type: 'postman' | 'swagger' }>({
+        defaultValues: {
+            type: 'postman',
+            collectionUrl: ''
+        }
+    })
+
+    const [loading, setLoading] = React.useState(false)
+    const [collectionJSON, setCollectionJSON] = React.useState<any>()
+
+    const importPostmanCollectionFromURL: SubmitHandler<{ collectionUrl: string }> = React.useCallback(async (values) => {
+        try {
+            setLoading(true)
+            const res = await fetch(values.collectionUrl)
+            const collectionJSON = await res.json()
+            setCollectionJSON(collectionJSON)
+            updateStoreFromCollection(collectionJSON, dispatch)
+
+        } catch (error) {
+            console.error(error)
+            alert(error)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
+
 
     return (
-        <div className='pt-8 pr-4 pl-12 flex flex-col h-screen'>
+        <div className='pt-8 pr-4 pl-4 flex flex-col h-screen overflow-scroll'>
             <div>
                 <svg width="100" height="70" viewBox="0 0 525 189" fill="none" xmlns="http://www.w3.org/2000/svg" className='-mt-6 -ml-1'>
                     <g clipPath="url(#clip0_257_2)">
@@ -40,10 +73,43 @@ export function Sidebar() {
 
             <div className='flex flex-col flex-1 justify-between pb-4'>
                 <div className='flex flex-col gap-3 mt-4'>
-                    <pre className='text-xs'>{JSON.stringify(repoStructure, null, 3)}</pre>
                     {
                         repoStructure.map(c => <SidebarCollectionComponent key={c.id} {...{ ...c }} />)
                     }
+                </div>
+
+                <div className='flex flex-col gap-4'>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button variant={'secondary'}>Import from Postman </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                                <DialogTitle>Import from Postman</DialogTitle>
+                                <DialogDescription>
+                                    Bring your Postman collection to Scout easily.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <form onSubmit={handleSubmit(importPostmanCollectionFromURL)}>
+                                <div className="flex flex-col gap-1 my-4">
+                                    <Label htmlFor="postmanCollectionUrl" className="text-sm">
+                                        Collection URL:
+                                    </Label>
+                                    <Input
+                                        id="postmanCollectionUrl"
+                                        className="col-span-3"
+                                        type='url'
+                                        {...register('collectionUrl', { required: true })}
+                                    />
+                                </div>
+                                <DialogFooter>
+                                    <Button loading={loading} loadingText='Fetching collection from URL...' type="submit" className='w-full' >Import</Button>
+                                </DialogFooter>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
+
+                    <Button>Import from Swagger</Button>
                 </div>
             </div>
         </div>
@@ -53,35 +119,48 @@ export function Sidebar() {
 function SidebarCollectionComponent(props: SidebarCollection) {
     const dispatch = useAppDispatch()
     const { activeCollectionId } = useAppSelector(store => store.collections)
+    const [open, setOpen] = React.useState(true)
     return (
-        <div className={`${activeCollectionId === props.id ? 'bg-green-100' : ''}`}>
-            <button onClick={() => setActiveCollection(dispatch, props.id)}>{props.name}</button>
-            <div className='flex flex-col ml-4'>
-                {props.folders.map(folder => <SidebarFolderComponent key={folder.id} {...{ ...folder }} />)}
-            </div>
+        <div className={`${activeCollectionId === props.id ? '' : ''}`}>
+            <button onClick={() => {
+                setActiveCollection(dispatch, props.id)
+                setOpen(!open)
+            }}>{props.name}</button>
+            {
+                open && (
+                    <div className='flex flex-col ml-4'>
+                        {props.folders.map(folder => <SidebarFolderComponent key={folder.id} {...{ ...folder }} />)}
+                        {props.requests.map((request) => <SidebarRequestComponent key={request.id} {...{ ...request }} />)}
+                    </div>
+                )
+            }
+
         </div >
     )
 }
 
 function SidebarFolderComponent(folder: SidebarFolder) {
-    const { activeTabId } = useAppSelector(store => store.tabs)
     const dispatch = useAppDispatch()
+    const [open, setOpen] = React.useState(true)
 
     return (
         <div>
             <div className='flex items-center justify-between w-full'>
-                <div className='flex gap-2 items-center' onClick={() => setActiveFolder(dispatch, folder.id, folder.componentId)}>
+                <button className='flex gap-2 items-center' onClick={() => {
+                    setActiveFolder(dispatch, folder.id, folder.componentId)
+                    setOpen(!open)
+                }}>
                     <BackpackIcon />
-                    <span contentEditable>
+                    <span>
                         {folder.name}
                     </span>
-                </div>
+                </button>
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant={'secondary'} size='icon'>
+                        <Button variant={'ghost'} size='icon'>
                             <svg width="16" height="16" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3.625 7.5C3.625 8.12132 3.12132 8.625 2.5 8.625C1.87868 8.625 1.375 8.12132 1.375 7.5C1.375 6.87868 1.87868 6.375 2.5 6.375C3.12132 6.375 3.625 6.87868 3.625 7.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM12.5 8.625C13.1213 8.625 13.625 8.12132 13.625 7.5C13.625 6.87868 13.1213 6.375 12.5 6.375C11.8787 6.375 11.375 6.87868 11.375 7.5C11.375 8.12132 11.8787 8.625 12.5 8.625Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path>
+                                <path d="M3.625 7.5C3.625 8.12132 3.12132 8.625 2.5 8.625C1.87868 8.625 1.375 8.12132 1.375 7.5C1.375 6.87868 1.87868 6.375 2.5 6.375C3.12132 6.375 3.625 6.87868 3.625 7.5ZM8.625 7.5C8.625 8.12132 8.12132 8.625 7.5 8.625C6.87868 8.625 6.375 8.12132 6.375 7.5C6.375 6.87868 6.87868 6.375 7.5 6.375C8.12132 6.375 8.625 6.87868 8.625 7.5ZM12.5 8.625C13.1213 8.625 13.625 8.12132 13.625 7.5C13.625 6.87868 13.1213 6.375 12.5 6.375C11.8787 6.375 11.375 6.87868 11.375 7.5C11.375 8.12132 11.8787 8.625 12.5 8.625Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path>
                             </svg>
                         </Button>
                     </DropdownMenuTrigger>
@@ -98,21 +177,30 @@ function SidebarFolderComponent(folder: SidebarFolder) {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            <div className='ml-4'>
-                {folder.subFolders.map(folder => (<SidebarFolderComponent key={folder.id} {...{ ...folder }} />))}
-                {
-                    folder.requests.map((request) => (
-                        <div key={request.id} className={`relative pl-6 py-1 border-l-2 ${request.id === activeTabId ? 'border-orange-500' : 'border-transparent'}`}>
-                            <button
-                                className='flex items-center gap-2 text-sm'
-                                onClick={() => dispatch(addRequestTab({ name: request.name, id: request.id }))}
-                            >
-                                <span className={`text-green-400 w-10 text-left`}>{request.method.toUpperCase()}</span> {request.name}
-                            </button>
-                        </div>
-                    ))
-                }
-            </div>
+            {
+                open && (
+                    <div className='ml-4'>
+                        {folder.subFolders.map(folder => (<SidebarFolderComponent key={folder.id} {...{ ...folder }} />))}
+                        {folder.requests.map((request) => <SidebarRequestComponent key={request.id} {...{ ...request }} />)}
+                    </div>
+                )
+            }
+
+        </div >
+    )
+}
+
+function SidebarRequestComponent(request: Request) {
+    const { activeTabId } = useAppSelector(store => store.tabs)
+    const dispatch = useAppDispatch()
+    return (
+        <div key={request.id} className={`relative py-1 border-l-2 ${request.id === activeTabId ? 'border-orange-500' : 'border-transparent'}`}>
+            <button
+                className='flex items-center gap-2 text-sm'
+                onClick={() => dispatch(addRequestTab({ name: request.name, id: request.id }))}
+            >
+                <span className={`text-green-400 w-10 text-left`}>{request.method.toUpperCase()}</span> {request.name}
+            </button>
         </div>
     )
 }

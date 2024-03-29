@@ -91,7 +91,7 @@ export type Variable = {
 
 
 /**
- * Simply a group of requests.
+ * Simply a container for a group of requests.
  */
 export type Folder = {
     id: string

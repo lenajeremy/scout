@@ -6,10 +6,10 @@ export type ParamsFormValues = Array<{
 }>
 
 export enum RequestBodyEnum {
-    none = 'NONE',
-    formData = 'FORMDATA',
-    json = "JSON",
-    binary = "BINARY",
+    none = 'none',
+    formData = 'formdata',
+    json = "json",
+    binary = "binary",
 }
 
 export type BodyFormData = Array<{

@@ -19,9 +19,8 @@ import { Sidebar } from '@/components/sidebar'
 import { useTheme } from 'next-themes'
 import { ModeToggle } from '@/components/ui/theme-switcher'
 import { PlusCircledIcon } from '@radix-ui/react-icons'
-import { v4 as uuid } from 'uuid'
 import { useAppDispatch, useAppSelector } from '@/store'
-import { addFolderToCollection, addRequest, addRequestToCollection, addRequestToFolder, createCollection, createFolder, initRequests } from '@/store/actions'
+import { bulkAddRequests } from '@/store/actions'
 import TabManager from '@/components/tab-manager'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 
@@ -56,7 +55,7 @@ export default function Home() {
 
   React.useEffect(() => {
     const localStoredRequests: Array<Request> = JSON.parse(localStorage.getItem('requests') || '[]')
-    dispatch(initRequests(localStoredRequests))
+    dispatch(bulkAddRequests(localStoredRequests))
   }, [])
 
   const { resolvedTheme } = useTheme()
@@ -108,15 +107,17 @@ export default function Home() {
     }
   }
 
-  // React.useEffect(() => {
-  //   if (!activeRequest) return
+  React.useEffect(() => {
+    if (!activeRequest) return
 
-  //   for (let [key, value] of Object.entries(activeRequest)) {
-  //     // @ts-ignore
-  //     formMethods.setValue(key, value)
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [activeRequest])
+    console.log(activeRequest)
+
+    for (let [key, value] of Object.entries(activeRequest)) {
+      // @ts-ignore
+      formMethods.setValue(key, value)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeRequest])
 
   return (
     <FormProvider {...formMethods} >

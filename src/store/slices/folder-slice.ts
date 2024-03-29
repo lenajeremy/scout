@@ -14,12 +14,9 @@ const foldersSlice = createSlice({
     name: 'foldersSlice',
     initialState,
     reducers: {
-        initFolders: (state, action: PayloadAction<typeof initialState>) => {
-            state.folders = action.payload.folders || []
-
-            if (!action.payload.activeFolderId) {
-                state.activeFolderId = state.folders.length === 0 ? "" : state.folders.at(state.folders.length - 1)?.id || ""
-            }
+        bulkAddFolders: (state, action: PayloadAction<Array<Folder>>) => {
+            state.folders = [...state.folders, ...action.payload]
+            state.activeFolderId = action.payload.length === 0 ? "" : action.payload.at(action.payload.length - 1)?.id || ""
 
             return state
         },
@@ -65,7 +62,7 @@ const foldersSlice = createSlice({
 
 export default foldersSlice.reducer
 export const {
-    initFolders,
+    bulkAddFolders,
     createFolder,
     deleteFolder,
     editFolder,
