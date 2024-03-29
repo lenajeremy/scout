@@ -53,6 +53,7 @@ export async function getResponseData<T>(res: Response): Promise<{ type: Respons
 
 export function getHeadersFromReq(obj: Response | Request): Record<string, string> {
   const headers: Record<string, string> = {}
+  //@ts-ignore
   Array.from(obj.headers.entries()).map(([key, value]) => {
     headers[key] = value;
   })
@@ -72,20 +73,19 @@ export function prepareHeaders(headers: RequestHeadersType): Record<string, stri
   return map;
 }
 
-function buildFolder(folderId: string, f: Folder[], r: Request[]): SidebarFolder {
-  const folder = f.find(f => f.id == folderId)
-  if (folder) {
-    const folderToReturn: SidebarFolder = {
-      id: folder.id,
-      name: folder.name,
-      subFolders: folder.subFolderIds.map(fId => buildFolder(fId, f, r)),
-      requests: folder.requestIds.map(rId => r.find(r => r.id === rId)!),
-      parentFolderId: String(folder.parentFolderId),
-    }
-    return folderToReturn
-  } else {
-    alert(`folder with id ${folderId} not found in list of folders ${JSON.stringify(f)}`)
+function buildFolder(folderId: string, f: Folder[], r: Request[], collectionId = ''): SidebarFolder {
+  const folder = f.find(f => f.id == folderId)!
+
+  const folderToReturn: SidebarFolder = {
+    collectionId,
+    id: folder.id,
+    name: folder.name,
+    subFolders: folder.subFolderIds.map(fId => buildFolder(fId, f, r, collectionId)),
+    requests: folder.requestIds.map(rId => r.find(r => r.id === rId)!),
+    parentFolderId: String(folder.parentFolderId),
   }
+
+  return folderToReturn
 }
 
 export function buildSidebarStructure(c: Collection[], f: Folder[], r: Request[]): SidebarCollection[] {
@@ -99,7 +99,8 @@ export function buildSidebarStructure(c: Collection[], f: Folder[], r: Request[]
 
   for (let folder of f) {
     if (!folder.parentFolderId) {
-      _collections.find(c => c.id == folder.collectionId)?.folders.push(buildFolder(folder.id, f, r))
+      let folderCollection = _collections.find(c => c.id === folder.collectionId)
+      folderCollection?.folders.push(buildFolder(folder.id, f, r, folderCollection.id))
     }
   }
 

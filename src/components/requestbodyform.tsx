@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Input } from './ui/input'
-import { RequestBodyEnum, RequestFormType } from '@/types/form'
+import { RequestBodyEnum } from '@/types/form'
+import { Request } from '@/types/collection'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { RadioGroup, RadioGroupItem } from './ui/radio-group'
 import { Label } from './ui/label'
@@ -17,7 +18,7 @@ loader.config({ paths: { vs: 'http://localhost:3000/min/vs' } });
 
 export function RequestBodyForm() {
 
-    const { setValue, watch, getValues } = useFormContext<RequestFormType>()
+    const { setValue, watch, getValues } = useFormContext<Request>()
     const requestBodyType = watch('bodyType')
     const jsonBody = watch('jsonBody')
     const { resolvedTheme } = useTheme()
@@ -116,8 +117,8 @@ export function RequestBodyForm() {
 }
 
 const FormDataForm = () => {
-    const { control } = useFormContext<RequestFormType>()
-    const { fields, append } = useFieldArray<RequestFormType>({ control, name: 'formData' })
+    const { control } = useFormContext<Request>()
+    const { fields, append } = useFieldArray<Request>({ control, name: 'formData' })
 
     return (
         <div className='space-y-2 w-full px-4'>
@@ -133,7 +134,7 @@ const FormDataForm = () => {
 
 const FormDataRow = ({ index }: { index: number }) => {
 
-    const { register, watch, setValue, getValues } = useFormContext<RequestFormType>()
+    const { register, watch, setValue, getValues } = useFormContext<Request>()
     const rowType = watch(`formData.${index}.type`)
 
     const deleteRow = () => {

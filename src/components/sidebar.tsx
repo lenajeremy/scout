@@ -147,7 +147,7 @@ function SidebarFolderComponent(folder: SidebarFolder) {
         <div>
             <div className='flex items-center justify-between w-full'>
                 <button className='flex gap-2 items-center' onClick={() => {
-                    setActiveFolder(dispatch, folder.id, folder.componentId)
+                    setActiveFolder(dispatch, folder.id, folder.collectionId)
                     setOpen(!open)
                 }}>
                     <BackpackIcon />
@@ -165,10 +165,10 @@ function SidebarFolderComponent(folder: SidebarFolder) {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        <DropdownMenuItem onClick={() => createNewFolder(dispatch, folder.componentId, folder.id)}>
+                        <DropdownMenuItem onClick={() => createNewFolder(dispatch, folder.collectionId, folder.id)}>
                             New Folder
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => createNewRequest(dispatch, folder.componentId, folder.id)}>
+                        <DropdownMenuItem onClick={() => createNewRequest(dispatch, folder.collectionId, folder.id)}>
                             New Request
                         </DropdownMenuItem>
                         <DropdownMenuItem>

@@ -1,4 +1,4 @@
-import { RequestFormType } from '@/types/form'
+import { Request } from '@/types/collection'
 import * as React from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { Button } from './ui/button'
@@ -6,8 +6,8 @@ import { PlusIcon, TrashIcon } from '@radix-ui/react-icons'
 import { Input } from './ui/input'
 
 export function RequestHeadersForm() {
-    const { control } = useFormContext<RequestFormType>()
-    const { fields, append } = useFieldArray<RequestFormType>({
+    const { control } = useFormContext<Request>()
+    const { fields, append } = useFieldArray<Request>({
         control: control,
         name: 'headers',
     })
@@ -24,7 +24,7 @@ export function RequestHeadersForm() {
 
 function HeadersRow({ i }: { i: number }) {
 
-    const {  register, setValue, getValues } = useFormContext<RequestFormType>()
+    const {  register, setValue, getValues } = useFormContext<Request>()
 
     const deleteRow = () => {
         const allParams = getValues('headers')

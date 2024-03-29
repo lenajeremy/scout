@@ -3,19 +3,19 @@ import { PlusIcon, TrashIcon } from '@radix-ui/react-icons'
 import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
-import { RequestFormType } from '@/types/form'
+import { Request } from '@/types/collection'
 
 
 
 export function RequestParametersForm() {
 
-    const { control } = useFormContext<RequestFormType>()
-    const { fields, append } = useFieldArray<RequestFormType>({
+    const { control } = useFormContext<Request>()
+    const { fields, append } = useFieldArray<Request>({
         control: control,
         name: 'params',
     })
 
-    // const url = useWatch<RequestFormType>({ control, name: 'url' })
+    // const url = useWatch<Request>({ control, name: 'url' })
 
     return (
         <div className='py-4 space-y-2'>
@@ -29,9 +29,9 @@ export function RequestParametersForm() {
 
 function ParamsRow({ i }: { i: number }) {
 
-    const { control, register, setValue, getValues } = useFormContext<RequestFormType>()
+    const { control, register, setValue, getValues } = useFormContext<Request>()
 
-    const paramRow = useWatch<RequestFormType>({ name: `params.${i}`, control })
+    const paramRow = useWatch<Request>({ name: `params.${i}`, control })
 
     React.useEffect(() => {
         if (getValues('url')) {

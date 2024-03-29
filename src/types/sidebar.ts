@@ -6,7 +6,7 @@ export type SidebarFolder = {
     subFolders: SidebarFolder[],
     requests: Request[],
     parentFolderId: string,
-    componentId: string,
+    collectionId: string,
 }
 
 export type SidebarCollection = {

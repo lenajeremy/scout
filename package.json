@@ -10,7 +10,8 @@
     "lint": "next lint",
     "test": "jest",
     "test:watch": "jest --watch",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "error-check": "yarn type-check && yarn lint"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.5.2",

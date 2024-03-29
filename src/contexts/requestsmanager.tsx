@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { RequestBodyEnum } from '@/types/form'
 import { APIRequest, RequestMethod } from '@/types/collection'
+import { REQUEST_DEFAULT_VALUES } from '@/constants'
 
 
 
@@ -25,7 +26,7 @@ export const RequestsManagerContext = React.createContext<RequestsManagerContext
 export const RequestsManager: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
     const [requests, setRequests] = React.useState<APIRequest[]>([])
-    const [activeRequest, setActiveRequest] = React.useState<APIRequest>(REQUEST_DEFAULT_VALUES)
+    const [activeRequest, setActiveRequest] = React.useState<APIRequest>({ ...REQUEST_DEFAULT_VALUES, id: '' })
 
     const saveRequest = (request: APIRequest) => {
         const index = requests.findIndex(r => r.id === request.id)
