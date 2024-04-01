@@ -25,7 +25,7 @@ import TabManager from '@/components/tab-manager'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 
 
-const TABS_CLASSNAME = 'w-full overflow-hidden relative data-[state=active]:after:h-[2px] data-[state=active]:after:w-full data-[state=active]:after:bg-black data-[state=active]:after:absolute data-[state=active]:after:bottom-0'
+// const TABS_CLASSNAME = 'w-full overflow-hidden relative data-[state=active]:after:h-[2px] data-[state=active]:after:w-full data-[state=active]:after:bg-black data-[state=active]:after:absolute data-[state=active]:after:bottom-0'
 
 const isFile = (d: BodyFormData[number]): d is { key: string, value: FileList, type: 'file' } => {
   return d.type === 'file'
@@ -126,7 +126,7 @@ export default function Home() {
         <div className='h-full w-full bg-neutral-200 dark:bg-neutral-700' />
         {
           activeRequest ? (
-            <main className='pt-8'>
+            <main className='overflow-hidden'>
               <TabManager />
               <form onSubmit={formMethods.handleSubmit(makeRequest)} autoComplete='on' className='h-full'>
                 <div className='flex items-center gap-2 px-4'>
@@ -160,13 +160,12 @@ export default function Home() {
 
                 <div>
                   <Tabs defaultValue="params">
-
                     <TabsList className='mx-4 w-[calc(100%-32px)]'>
-                      <TabsTrigger className={TABS_CLASSNAME} value="params">Params</TabsTrigger>
-                      <TabsTrigger className={TABS_CLASSNAME} value="body">Body</TabsTrigger>
-                      <TabsTrigger className={TABS_CLASSNAME} value="headers">Headers</TabsTrigger>
-                      <TabsTrigger className={TABS_CLASSNAME} value="auth">Auth</TabsTrigger>
-                      <TabsTrigger className={TABS_CLASSNAME} value='settings'>Settings</TabsTrigger>
+                      <TabsTrigger className="flex-1" value="params">Params</TabsTrigger>
+                      <TabsTrigger className="flex-1" value="body">Body</TabsTrigger>
+                      <TabsTrigger className="flex-1" value="headers">Headers</TabsTrigger>
+                      <TabsTrigger className="flex-1" value="auth">Auth</TabsTrigger>
+                      <TabsTrigger className="flex-1" value='settings'>Settings</TabsTrigger>
                     </TabsList>
 
                     <div className='h-96 overflow-scroll'>

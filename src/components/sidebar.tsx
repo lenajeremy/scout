@@ -60,7 +60,7 @@ export function Sidebar() {
                 </svg>
             </div>
 
-            <div className='flex flex-col overflow-scroll h-full mt-6 mb-6 gap-4 flex-1 pr-4'>
+            <div className='flex flex-col overflow-scroll h-full mt-6 mb-6 gap-2 flex-1 pr-4'>
                 {repoStructure.map(c => <SidebarCollectionComponent key={c.id} {...{ ...c }} />)}
             </div>
 
@@ -161,8 +161,8 @@ function SidebarCollectionComponent(props: SidebarCollection) {
                             {
                                 props.folders.length == 0 && props.requests.length === 0 && (
                                     <div className='h-full p-4 space-y-2'>
-                                        <p className='text-sm text-center'>Collection doesn't have any request.</p>
-                                        <Button className='mx-auto flex' size={'sm'}>Add Request</Button>
+                                        <p className='text-sm text-center'>Collection is empty.</p>
+                                        <Button onClick={() => createNewRequest(dispatch, props.id, "")} className='mx-auto flex' size={'sm'}>Add Request</Button>
                                     </div>
                                 )
                             }
@@ -194,7 +194,7 @@ function SidebarCollectionComponent(props: SidebarCollection) {
 
 function SidebarFolderComponent(folder: SidebarFolder) {
     const dispatch = useAppDispatch()
-    const [open, setOpen] = React.useState(true)
+    const [open, setOpen] = React.useState(false)
 
     return (
         <div>
@@ -251,13 +251,13 @@ function SidebarRequestComponent(request: Request) {
     const { activeTabId } = useAppSelector(store => store.tabs)
     const dispatch = useAppDispatch()
     return (
-        <div key={request.id} className={`relative my-2 after:absolute after:-left-2 after:h-full after:w-0.5 after:top-0 after:bg-transparent after:duration-200 ${request.id === activeTabId ? 'after:bg-orange-500' : 'border-transparent'}`}>
+        <div key={request.id} className={`relative my-2 after:absolute after:-left-2 after:h-full after:w-0.5 after:top-0 after:bg-transparent after:duration-200 ${request.id === activeTabId ? 'after:bg-[#0085FF]' : 'border-transparent'}`}>
             <button
                 className='flex items-center gap-1 text-sm overflow-hidden whitespace-nowrap w-full text-left'
                 onClick={() => dispatch(addRequestTab({ name: request.name, id: request.id }))}
             >
                 <p className='w-full text-ellipsis overflow-hidden'>
-                    <span className={`text-green-400 w-10 text-xs text-left mr-2`}>{request.method.toUpperCase()}</span>
+                    <span className={`text-[#0085FF] w-10 text-xs text-left mr-2`}>{request.method.toUpperCase()}</span>
                     <span>{request.name}</span>
                 </p>
             </button>
