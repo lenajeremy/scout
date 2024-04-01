@@ -176,7 +176,7 @@ function SidebarCollectionComponent(props: SidebarCollection) {
                     <DialogHeader>
                         <DialogTitle>Delete {props.name}</DialogTitle>
                         <DialogDescription>
-                            Are you sure you want to delete this collection? You can't undo this action!
+                            Are you sure you want to delete this collection? You can&apos;t undo this action!
                         </DialogDescription>
                     </DialogHeader>
 
@@ -237,7 +237,7 @@ function SidebarFolderComponent(folder: SidebarFolder) {
                 open && (
                     <div className='ml-4 pt-1.5 gap-2'>
                         <div className='space-y-1.5'>
-                            {folder.subFolders.map(folder => <SidebarFolderComponent {...{ ...folder }} />)}
+                            {folder.subFolders.map(folder => <SidebarFolderComponent key = {folder.id} {...{ ...folder }} />)}
                         </div>
                         {folder.requests.map((request) => <SidebarRequestComponent key={request.id} {...{ ...request }} />)}
                     </div>
