@@ -58,6 +58,7 @@ export function getHeadersFromReq(obj: Response | Request): Record<string, strin
   const headers: Record<string, string> = {}
   //@ts-ignore
   Array.from(obj.headers.entries()).map(([key, value]) => {
+    // @ts-ignore
     headers[key] = value;
   })
 
