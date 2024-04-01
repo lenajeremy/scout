@@ -39,6 +39,14 @@ const foldersSlice = createSlice({
 
             return state
         },
+        deleteFoldersInCollection: (state, action: PayloadAction<string>) => {
+            const filteredFolders = state.folders.filter(f => f.collectionId !== action.payload)
+            state.folders = filteredFolders
+
+            state.activeFolderId = filteredFolders.at(filteredFolders.length - 1)?.id || ""
+            
+            return state;
+        },
         editFolder: (state, action: PayloadAction<Folder>) => {
             const folderIndex = state.folders.findIndex(c => c.id === action.payload.id)
             if (folderIndex !== -1) {
@@ -67,5 +75,6 @@ export const {
     deleteFolder,
     editFolder,
     addRequestToFolder,
+    deleteFoldersInCollection,
     setActiveFolder: setActiveFolderAction
 } = foldersSlice.actions

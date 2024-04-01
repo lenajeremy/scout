@@ -16,6 +16,14 @@ const requestsSlice = createSlice({
         deleteRequest: (state, action: PayloadAction<string>) => {
             return state.filter(r => r.id !== action.payload)
         },
+        deleteRequestsInCollection: (state, action: PayloadAction<string>) => {
+            const filteredFolders = state.filter(r => r.collectionId !== action.payload)
+            state = filteredFolders
+
+            filteredFolders.at(filteredFolders.length - 1)?.id || ""
+            
+            return state;
+        },
         editRequest: (state, action: PayloadAction<Request>) => {
             const requestToEditIndex = state.findIndex(r => r.id === action.payload.id)
             if (requestToEditIndex !== -1) {
@@ -31,5 +39,6 @@ export const {
     addRequest, 
     deleteRequest,
     editRequest,
-    bulkAddRequests
+    bulkAddRequests,
+    deleteRequestsInCollection
 } = requestsSlice.actions

@@ -121,7 +121,7 @@ export default function Home() {
 
   return (
     <FormProvider {...formMethods} >
-      <div className='grid grid-cols-[300px,_1px,_1fr,_1px,_64px] min-h-screen mx-auto'>
+      <div className='grid grid-cols-[300px,_1px,_1fr,_1px,_64px] max-h-screen overflow-clip mx-auto'>
         <Sidebar />
         <div className='h-full w-full bg-neutral-200 dark:bg-neutral-700' />
         {

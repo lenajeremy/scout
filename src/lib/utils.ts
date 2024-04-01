@@ -10,6 +10,9 @@ import {
   bulkAddFolders,
   bulkAddRequests,
   createCollection, createFolder,
+  deleteFoldersInCollection,
+  deleteRequestsInCollection,
+  deleteCollection as deleteCollectionAction,
   setActiveCollectionAction, setActiveFolderAction
 } from "@/store/actions";
 import { DEFAULT_COLLECTION, DEFAULT_FOLDER_WITHOUT_COLLECTION_ID, REQUEST_DEFAULT_VALUES } from "@/constants";
@@ -183,6 +186,12 @@ export function updateStoreFromCollection(postmanJSON: any, dispatch: AppDispatc
 export function createNewCollection(actor: AppDispatch) {
   const newCollection = { ...DEFAULT_COLLECTION, id: uuid() }
   actor(createCollection(newCollection))
+}
+
+export function deleteCollection(actor: AppDispatch, collectionId: string) {
+  actor(deleteRequestsInCollection(collectionId))
+  actor(deleteFoldersInCollection(collectionId))
+  actor(deleteCollectionAction(collectionId))
 }
 
 export function createNewFolder(actor: AppDispatch, collectionId: string, parentFolderId: string) {
