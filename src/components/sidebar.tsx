@@ -18,6 +18,7 @@ export function Sidebar() {
     const { collections } = useAppSelector(store => store.collections)
     const { folders } = useAppSelector(store => store.folders)
     const dispatch = useAppDispatch()
+    const [openModal, setOpenModal] = React.useState(false)
 
     const repoStructure = React.useMemo(() => buildSidebarStructure(collections, folders, requests), [collections, folders, requests])
     const { handleSubmit, register } = useForm<{ collectionUrl: string, type: 'postman' | 'swagger' }>({
@@ -35,6 +36,7 @@ export function Sidebar() {
             const res = await fetch(values.collectionUrl)
             const collectionJSON = await res.json()
             updateStoreFromCollection(collectionJSON, dispatch)
+            setOpenModal(false)
         } catch (error) {
             console.error(error)
             alert(error)
@@ -49,7 +51,7 @@ export function Sidebar() {
         <div className='p-4 pr-0 flex flex-col justify-between text-sm h-screen'>
             <div className='sticky top-0'>
                 <svg width="75" height="28" viewBox="0 0 89 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <ellipse cx="45.632" cy="18.762" rx="5" ry="6" fill="#0085FF" fill-opacity="0.3" />
+                    <ellipse cx="45.632" cy="18.762" rx="5" ry="6" fill="#0085FF" fillOpacity="0.3" />
                     <ellipse cx="47.132" cy="19.712" rx="5.5" ry="6.05" fill="#0085FF" />
                     <path className="fill-black dark:fill-white" d="M18.144 7.034L14.976 8.15C14.688 6.314 13.14 3.794 9.576 3.794C6.696 3.794 4.644 5.666 4.644 8.042C4.644 9.878 5.76 11.282 7.92 11.75L11.736 12.578C15.984 13.514 18.36 16.178 18.36 19.742C18.36 23.702 14.976 27.302 9.54 27.302C3.384 27.302 0.468 23.342 0 19.706L3.384 18.626C3.636 21.47 5.652 24.098 9.504 24.098C13.032 24.098 14.76 22.262 14.76 20.03C14.76 18.194 13.5 16.61 10.944 16.07L7.308 15.278C3.672 14.486 1.08 12.11 1.08 8.294C1.08 4.298 4.788 0.697998 9.504 0.697998C15.264 0.697998 17.568 4.262 18.144 7.034Z" />
                     <path className="fill-black dark:fill-white" d="M27.6123 12.038C24.8763 12.038 22.3563 14.054 22.3563 18.086C22.3563 22.046 24.8403 24.17 27.6483 24.17C30.8883 24.17 32.0763 21.974 32.4723 20.606L35.4603 21.902C34.6323 24.386 32.1483 27.302 27.6483 27.302C22.6083 27.302 18.9003 23.342 18.9003 18.086C18.9003 12.686 22.6803 8.906 27.6123 8.906C32.2203 8.906 34.5963 11.786 35.3163 14.414L32.2563 15.71C31.8243 14.018 30.5643 12.038 27.6123 12.038Z" />
@@ -66,7 +68,7 @@ export function Sidebar() {
 
 
             <div className='flex flex-col gap-2 justify-end pr-4'>
-                <Dialog>
+                <Dialog open = {openModal} onOpenChange={setOpenModal}>
                     <DialogTrigger asChild>
                         <Button variant={'secondary'}>Import from Postman </Button>
                     </DialogTrigger>
@@ -237,7 +239,7 @@ function SidebarFolderComponent(folder: SidebarFolder) {
                 open && (
                     <div className='ml-4 pt-1.5 gap-2'>
                         <div className='space-y-1.5'>
-                            {folder.subFolders.map(folder => <SidebarFolderComponent key = {folder.id} {...{ ...folder }} />)}
+                            {folder.subFolders.map(folder => <SidebarFolderComponent key={folder.id} {...{ ...folder }} />)}
                         </div>
                         {folder.requests.map((request) => <SidebarRequestComponent key={request.id} {...{ ...request }} />)}
                     </div>

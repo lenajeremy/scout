@@ -21,7 +21,7 @@ function RequestTab(props: { id: string, name: string }) {
 
     return (
         <>
-            <button className={`flex text-left min-w-[160px] gap-6 items-center justify-between px-2 py-1.5 duration-200 rounded-lg ${activeTabId === props.id ? 'bg-neutral-100 p-1 text-neutral-500 dark:bg-[#2e2e2e] dark:text-neutral-400' : ''}`} onClick={() => dispatch(addRequestTab(props))}>
+            <button className={`flex text-left gap-6 items-center justify-between px-2 py-1.5 duration-200 rounded-lg ${activeTabId === props.id ? 'bg-neutral-100 p-1 text-neutral-500 dark:bg-[#2e2e2e] dark:text-neutral-400' : ''}`} onClick={() => dispatch(addRequestTab(props))}>
                 <span className="text-sm">
                     {props.id === activeTabId && "🔹"} {" "}
                     {props.name}

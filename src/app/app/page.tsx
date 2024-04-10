@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { RequestParametersForm } from '@/components/requestparametersform'
 import { RequestBodyForm } from '@/components/requestbodyform'
 import { REQUEST_METHODS, REQUEST_DEFAULT_VALUES, DEFAULT_COLLECTION, DEFAULT_FOLDER_WITHOUT_COLLECTION_ID } from '@/constants'
-import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
+import { FormProvider, SubmitHandler, useForm, useWatch } from 'react-hook-form'
 import { BodyFormData, RequestBodyEnum } from '@/types/form'
 import { APIRequest, Request, ResponseTypeEnum, RequestMethod, Folder } from '@/types/collection'
 import { createNewCollection, createNewFolder, createNewRequest, getResponseData, prepareHeaders } from '@/lib/utils'
@@ -23,6 +23,7 @@ import { useAppDispatch, useAppSelector } from '@/store'
 import { bulkAddRequests } from '@/store/actions'
 import TabManager from '@/components/tab-manager'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
+import VariableInput from '@/components/variable-input'
 
 
 // const TABS_CLASSNAME = 'w-full overflow-hidden relative data-[state=active]:after:h-[2px] data-[state=active]:after:w-full data-[state=active]:after:bg-black data-[state=active]:after:absolute data-[state=active]:after:bottom-0'
@@ -119,6 +120,8 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeRequest])
 
+  const url = formMethods.watch('url')
+
   return (
     <FormProvider {...formMethods} >
       <div className='grid grid-cols-[300px,_1px,_1fr,_1px,_64px] max-h-screen overflow-clip mx-auto'>
@@ -137,14 +140,15 @@ export default function Home() {
                     searchPlaceholder='Search request method'
                     defaultValue={formMethods.getValues('method')}
                   />
-                  {/* <pre>{method}</pre> */}
-                  <Input
+
+                  <VariableInput intialValue={url} onChange={(url) => console.log(url)} />
+                  {/* <Input
                     type='url'
                     placeholder='Enter request url'
                     className='outline-none'
                     autoFocus
                     {...formMethods.register('url', { required: true })}
-                  />
+                  /> */}
 
                   <Input
                     type='text'

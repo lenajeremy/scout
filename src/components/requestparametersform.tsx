@@ -4,6 +4,8 @@ import { Input } from './ui/input'
 import { Button } from './ui/button'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { Request } from '@/types/collection'
+import { useReplaceVariableString } from '@/hooks/useReplaceVariableString'
+import { useAppSelector } from '@/store'
 
 
 
@@ -30,13 +32,19 @@ export function RequestParametersForm() {
 function ParamsRow({ i }: { i: number }) {
 
     const { control, register, setValue, getValues } = useFormContext<Request>()
-
     const paramRow = useWatch<Request>({ name: `params.${i}`, control })
+    const url = useWatch<Request>({ name: 'url', control })
+    const activeCollectionId = useAppSelector(store => store.collections.activeCollectionId)
+    const properUrl = useReplaceVariableString({ originalString: url, collectionId: activeCollectionId })
 
     React.useEffect(() => {
-        if (getValues('url')) {
+
+        console.log(properUrl)
+        
+
+        if (properUrl) {
             const params = getValues('params')
-            const oldUrl = new URL(getValues('url'))
+            const oldUrl = new URL(properUrl)
             const oldUrlHref = oldUrl.origin + oldUrl.pathname
             const newUrl = new URL(oldUrlHref)
 
