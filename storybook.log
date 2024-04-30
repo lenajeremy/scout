@@ -1,0 +1,53 @@
+yarn add v1.22.22
+[1/4] Resolving packages...
+warning @storybook/nextjs > @storybook/builder-webpack5 > fork-ts-checker-webpack-plugin > memfs@3.6.0: this will be v4
+warning @storybook/nextjs > @storybook/builder-webpack5 > webpack-dev-middleware > memfs@3.6.0: this will be v4
+[2/4] Fetching packages...
+warning sharp@0.33.3: The engine "libvips" appears to be invalid.
+warning @img/sharp-darwin-x64@0.33.3: The engine "pnpm" appears to be invalid.
+warning @img/sharp-darwin-x64@0.33.3: The engine "glibc" appears to be invalid.
+warning @img/sharp-libvips-darwin-x64@1.0.2: The engine "pnpm" appears to be invalid.
+warning @img/sharp-libvips-darwin-x64@1.0.2: The engine "macos" appears to be invalid.
+warning @img/sharp-darwin-arm64@0.33.3: The engine "pnpm" appears to be invalid.
+warning @img/sharp-darwin-arm64@0.33.3: The engine "glibc" appears to be invalid.
+warning @img/sharp-libvips-linux-arm@1.0.2: The engine "pnpm" appears to be invalid.
+warning @img/sharp-libvips-linux-arm@1.0.2: The engine "glibc" appears to be invalid.
+warning @img/sharp-libvips-darwin-arm64@1.0.2: The engine "pnpm" appears to be invalid.
+warning @img/sharp-libvips-darwin-arm64@1.0.2: The engine "macos" appears to be invalid.
+warning @img/sharp-libvips-linux-arm64@1.0.2: The engine "pnpm" appears to be invalid.
+warning @img/sharp-libvips-linux-arm64@1.0.2: The engine "glibc" appears to be invalid.
+warning @img/sharp-libvips-linux-x64@1.0.2: The engine "pnpm" appears to be invalid.
+warning @img/sharp-libvips-linux-x64@1.0.2: The engine "glibc" appears to be invalid.
+warning @img/sharp-libvips-linux-s390x@1.0.2: The engine "pnpm" appears to be invalid.
+warning @img/sharp-libvips-linux-s390x@1.0.2: The engine "glibc" appears to be invalid.
+warning @img/sharp-libvips-linuxmusl-arm64@1.0.2: The engine "pnpm" appears to be invalid.
+warning @img/sharp-libvips-linuxmusl-arm64@1.0.2: The engine "musl" appears to be invalid.
+warning @img/sharp-linux-arm@0.33.3: The engine "pnpm" appears to be invalid.
+warning @img/sharp-linux-arm@0.33.3: The engine "glibc" appears to be invalid.
+warning @img/sharp-libvips-linuxmusl-x64@1.0.2: The engine "pnpm" appears to be invalid.
+warning @img/sharp-libvips-linuxmusl-x64@1.0.2: The engine "musl" appears to be invalid.
+warning @img/sharp-linux-arm64@0.33.3: The engine "pnpm" appears to be invalid.
+warning @img/sharp-linux-arm64@0.33.3: The engine "glibc" appears to be invalid.
+warning @img/sharp-linux-x64@0.33.3: The engine "pnpm" appears to be invalid.
+warning @img/sharp-linux-x64@0.33.3: The engine "glibc" appears to be invalid.
+warning @img/sharp-linux-s390x@0.33.3: The engine "pnpm" appears to be invalid.
+warning @img/sharp-linux-s390x@0.33.3: The engine "glibc" appears to be invalid.
+warning @img/sharp-linuxmusl-arm64@0.33.3: The engine "pnpm" appears to be invalid.
+warning @img/sharp-linuxmusl-arm64@0.33.3: The engine "musl" appears to be invalid.
+warning @img/sharp-wasm32@0.33.3: The engine "pnpm" appears to be invalid.
+warning @img/sharp-linuxmusl-x64@0.33.3: The engine "pnpm" appears to be invalid.
+warning @img/sharp-linuxmusl-x64@0.33.3: The engine "musl" appears to be invalid.
+warning @img/sharp-win32-ia32@0.33.3: The engine "pnpm" appears to be invalid.
+warning @img/sharp-win32-x64@0.33.3: The engine "pnpm" appears to be invalid.
+[3/4] Linking dependencies...
+warning " > @monaco-editor/react@4.5.2" has unmet peer dependency "monaco-editor@>= 0.25.0 < 1".
+warning "@monaco-editor/react > @monaco-editor/loader@1.3.3" has unmet peer dependency "monaco-editor@>= 0.21.0 < 1".
+warning " > @testing-library/user-event@14.5.1" has unmet peer dependency "@testing-library/dom@>=7.21.4".
+warning "@storybook/nextjs > babel-loader@9.1.3" has unmet peer dependency "webpack@>=5".
+warning "@storybook/nextjs > @pmmmwh/react-refresh-webpack-plugin@0.5.13" has unmet peer dependency "webpack@>=4.43.0 <6.0.0".
+warning "@storybook/nextjs > node-polyfill-webpack-plugin@2.0.1" has unmet peer dependency "webpack@>=5".
+warning "@storybook/nextjs > postcss-loader@7.3.4" has unmet peer dependency "webpack@^5.0.0".
+warning "@storybook/nextjs > style-loader@3.3.4" has unmet peer dependency "webpack@^5.0.0".
+warning "@storybook/nextjs > sass-loader@12.6.0" has unmet peer dependency "webpack@^5.0.0".
+error Error: EACCES: permission denied, mkdir '/Users/jeremiahlena/Documents/Programming/Web Development/scout/node_modules/@babel/core/node_modules/chalk'
+info Visit https://yarnpkg.com/en/docs/cli/add for documentation about this command.

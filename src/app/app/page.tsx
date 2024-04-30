@@ -26,7 +26,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import VariableInput from '@/components/variable-input'
 
 
-// const TABS_CLASSNAME = 'w-full overflow-hidden relative data-[state=active]:after:h-[2px] data-[state=active]:after:w-full data-[state=active]:after:bg-black data-[state=active]:after:absolute data-[state=active]:after:bottom-0'
+
 
 const isFile = (d: BodyFormData[number]): d is { key: string, value: FileList, type: 'file' } => {
   return d.type === 'file'
