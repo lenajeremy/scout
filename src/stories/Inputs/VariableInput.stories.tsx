@@ -1,23 +1,23 @@
-import type { StoryObj, Meta } from "@storybook/react";
-import VariableInput from "@/components/variable-input";
-import Providers from "@/providers";
-import { useAppDispatch } from "@/store";
-import { initCollections } from "@/store/actions";
-import React from "react";
+// import type { StoryObj, Meta } from "@storybook/react";
+// import VariableInput from "@/components/variable-input";
+// import Providers from "@/providers";
+// import { useAppDispatch } from "@/store";
+// import { initCollections } from "@/store/actions";
+// import React from "react";
 
-const meta = {
-  component: VariableInput,
-  tags: ["autodocs"],
-} satisfies Meta<typeof VariableInput>;
+// const meta = {
+//   component: VariableInput,
+//   tags: ["autodocs"],
+// } satisfies Meta<typeof VariableInput>;
 
-export default meta;
+// export default meta;
 
-export const VariableInputStory = {
-  render: (props) => {
-    return (
-      <Providers>
-        <VariableInput {...props} />
-      </Providers>
-    );
-  },
-} satisfies StoryObj<typeof VariableInput>;
+// export const VariableInputStory = {
+//   render: (props) => {
+//     return (
+//       <Providers>
+//         <VariableInput {...props} />
+//       </Providers>
+//     );
+//   },
+// } satisfies StoryObj<typeof VariableInput>;
