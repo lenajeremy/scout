@@ -18,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} dark:bg-[#1e1e1e] dark:text-neutral-400 h-screen`}>
+      <body className={`${inter.className} dark:bg-black dark:text-neutral-400 h-screen`}>
         <Providers>
           {children}
           <Toaster richColors position='top-right' />
