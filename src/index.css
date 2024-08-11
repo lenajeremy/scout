@@ -74,3 +74,7 @@
   padding: 2rem;
   text-align: center;
 }
+
+.monaco-editor, .monaco-editor-background, .margin {
+  background-color: hsl(var(--background))!important;
+}
