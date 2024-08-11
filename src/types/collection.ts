@@ -23,13 +23,13 @@ export enum ResponseTypeEnum {
  * 
  */
 export enum RequestMethod {
-    GET = "get",
-    POST = "post",
-    PUT = "put",
-    PATCH = "patch",
-    DELETE = "delete",
-    OPTIONS = "options",
-    HEAD = "head"
+    GET = "GET",
+    POST = "POST",
+    PUT = "PUT",
+    PATCH = "PATCH",
+    DELETE = "DELETE",
+    OPTIONS = "OPTIONS",
+    HEAD = "HEAD"
 }
 
 

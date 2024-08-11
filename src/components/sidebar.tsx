@@ -434,7 +434,7 @@ function SidebarRequestComponent(request: Request) {
       >
         <p className="w-full text-ellipsis overflow-hidden">
           <span className={`text-[#0085FF] w-10 text-xs text-left mr-2`}>
-            {request.method.toUpperCase()}
+            {request.method}
           </span>
           <span>{request.name}</span>
         </p>

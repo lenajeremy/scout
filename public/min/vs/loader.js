@@ -520,8 +520,7 @@ var AMDLoader;
               h.setAttribute("type", "text/javascript"),
               this.attachListeners(h, o, i);
             var y = t.getConfig().getOptionsLiteral().trustedTypesPolicy;
-            console.log(y, 'this is y')
-            y && (r = y.createScriptURL(r)), console.log(r, 'script url'), h.setAttribute("src", r);
+            y && (r = y.createScriptURL(r)), h.setAttribute("src", r);
             var v = t.getConfig().getOptionsLiteral().cspNonce;
             v && h.setAttribute("nonce", v),
               document.getElementsByTagName("head")[0].appendChild(h);

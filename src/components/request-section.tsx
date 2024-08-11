@@ -19,6 +19,7 @@ import { RequestBodyForm } from "./requestbodyform";
 import { RequestHeadersForm } from "./requestheadersform";
 import MonacoEditor from "@monaco-editor/react";
 import { useTheme } from "next-themes";
+import { useAppSelector } from "@/store";
 
 type WithoutPromise<T> = T extends Promise<infer T> ? T : never;
 
@@ -30,23 +31,40 @@ const isFile = (
 
 export default function RequestSection() {
   const formMethods = useFormContext<APIRequest>();
+  const { resolvedTheme } = useTheme();
+
   const [responseData, setResponseData] = React.useState<
     WithoutPromise<ReturnType<typeof getResponseData>>
   >({ data: null, type: ResponseTypeEnum.json });
-  const [status, setStatus] = React.useState<string>("");
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const url = formMethods.watch("url");
 
-  const { resolvedTheme } = useTheme();
+  const [status, setStatus] = React.useState<string>("");
+
+  const [loading, setLoading] = React.useState<boolean>(false);
+
+  const urlRef = React.useRef(formMethods.getValues("url"));
+  const activeRequestId = useAppSelector((store) => store.tabs.activeTabId);
+  const activeRequest = useAppSelector((store) => store.requests).find(
+    (r) => r.id === activeRequestId
+  );
+
+  React.useEffect(() => {
+    if (activeRequest) {
+      urlRef.current = activeRequest.url;
+    }
+  }, [activeRequestId]);
 
   const makeRequest: SubmitHandler<APIRequest> = async (data) => {
+    console.log(data)
     setLoading(true);
 
     const headers = prepareHeaders(data.headers);
     let res: Response | undefined = undefined;
 
     try {
-      if (data.method === "get" || data.method === "head") {
+      if (
+        data.method === RequestMethod.GET ||
+        data.method === RequestMethod.HEAD
+      ) {
         res = await fetch(data.url, { method: data.method, headers });
       } else {
         switch (data.bodyType) {
@@ -96,15 +114,15 @@ export default function RequestSection() {
     }
   };
 
+  const onUrlInput = React.useCallback(
+    (url: string) => formMethods.setValue("url", url),
+    []
+  );
+
   return (
     <main className="overflow-hidden">
       <TabManager />
-      {/* <pre>{JSON.stringify({ url }, null, 3)}</pre> */}
-      <form
-        onSubmit={formMethods.handleSubmit(makeRequest)}
-        autoComplete="on"
-        className="h-full"
-      >
+      <form onSubmit={formMethods.handleSubmit(makeRequest)} className="h-full">
         <div className="flex items-center gap-2 px-4">
           <Select
             options={
@@ -113,17 +131,18 @@ export default function RequestSection() {
                 value: string;
               }>
             }
-            onChange={(option) =>
-              formMethods.setValue("method", option as RequestMethod)
-            }
+            onChange={(option) => {
+              formMethods.setValue("method", option.value as RequestMethod);
+            }}
             placeholder="Request Method"
             searchPlaceholder="Search request method"
-            defaultValue={formMethods.getValues("method")}
+            defaultValue={formMethods.getValues("method").toUpperCase()}
           />
 
           <VariableInput
-            intialValue={url}
-            onChange={(url) => console.log(url)}
+            intialValue={urlRef.current}
+            // onChange={(url) => console.log(url)}
+            onChange={onUrlInput}
           />
 
           <Input
@@ -138,7 +157,7 @@ export default function RequestSection() {
           </Button>
         </div>
 
-        <div className="h-[1px] w-full bg-neutral-200 dark:bg-neutral-700 my-4" />
+        <div className="h-[1px] w-full bg-muted my-4" />
 
         <div>
           <Tabs defaultValue="params">
@@ -180,7 +199,7 @@ export default function RequestSection() {
           </Tabs>
         </div>
 
-        <div className="h-[1px] w-full bg-neutral-200 dark:bg-neutral-700 my-4" />
+        <div className="h-[1px] w-full bg-muted my-4" />
 
         <div className="relative h-96">
           <code className="text-[12px] text-right top-0 right-5 opacity-60 w-full block absolute z-50">

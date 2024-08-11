@@ -50,8 +50,6 @@ export default function Scout() {
   React.useEffect(() => {
     if (!activeRequest) return;
 
-    console.log(activeRequest);
-
     for (const [key, value] of Object.entries(activeRequest)) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
