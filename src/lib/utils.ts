@@ -1,4 +1,4 @@
-import { Collection, Folder, ResponseTypeEnum, Request, RequestMethod, APIRequest } from "@/types/collection";
+import { Collection, Folder, ResponseTypeEnum, Request, RequestMethod } from "@/types/collection";
 import { SidebarCollection, SidebarFolder } from '@/types/sidebar'
 import { RequestBodyEnum, RequestHeadersType } from "@/types/form";
 import { type ClassValue, clsx } from "clsx"
