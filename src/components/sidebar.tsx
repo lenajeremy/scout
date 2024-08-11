@@ -26,7 +26,6 @@ import {
 } from './ui/dropdown-menu'
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,

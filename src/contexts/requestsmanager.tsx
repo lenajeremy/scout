@@ -1,6 +1,5 @@
 import * as React from 'react'
-import { RequestBodyEnum } from '@/types/form'
-import { APIRequest, RequestMethod } from '@/types/collection'
+import { APIRequest } from '@/types/collection'
 import { REQUEST_DEFAULT_VALUES } from '@/constants'
 
 

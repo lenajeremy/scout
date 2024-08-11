@@ -78,6 +78,8 @@ function VariableInput(props: VariableInputProps) {
     }, [])
 
     const updateInnerHTML = (initialString: string) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         initialString = initialString.replaceAll(FIND_VARIABLE_REGEX, match => `<span class = 'text-[#0085FF]'>${match}</span>`)
         const newInnerHTML = `<span>${initialString}</span>`
         setHtmlContent(newInnerHTML)
