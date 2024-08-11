@@ -1,4 +1,3 @@
-"use client";
 import * as React from "react";
 import { SubmitHandler, useFormContext } from "react-hook-form";
 import TabManager from "./tab-manager";
