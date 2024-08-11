@@ -92,7 +92,7 @@ function VariableInput(props: VariableInputProps) {
     // @ts-ignore
     initialString = initialString.replaceAll(
       FIND_VARIABLE_REGEX,
-      (match) => `<span class = 'text-[#0085FF]'>${match}</span>`
+      (match: any) => `<span class = 'text-[#0085FF]'>${match}</span>`
     );
     const newInnerHTML = `<span>${initialString}</span>`;
     setHtmlContent(newInnerHTML);
