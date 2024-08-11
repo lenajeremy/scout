@@ -18,7 +18,7 @@ import { RequestParametersForm } from "./requestparametersform";
 import { RequestBodyForm } from "./requestbodyform";
 import { RequestHeadersForm } from "./requestheadersform";
 import MonacoEditor from "@monaco-editor/react";
-import Image from "next/image";
+// import Image from "next/image";
 import { useTheme } from "next-themes";
 
 type WithoutPromise<T> = T extends Promise<infer T> ? T : never;
@@ -225,7 +225,7 @@ export default function RequestSection() {
           )}
 
           {responseData.type === ResponseTypeEnum.image && (
-            <Image
+            <img
               src={responseData.data as string}
               className="w-full h-full object-contain"
               alt="response image"
