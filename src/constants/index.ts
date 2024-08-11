@@ -1,6 +1,5 @@
 import { APIRequest, Collection, Folder, RequestMethod } from "@/types/collection";
 import { RequestBodyEnum } from "@/types/form";
-import { v4 as uuid } from 'uuid'
 
 export const REQUEST_METHODS = [
     {

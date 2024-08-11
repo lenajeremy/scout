@@ -8,5 +8,7 @@ export function useReplaceVariableString({ originalString, collectionId} : { ori
 
     if (!collection) return "INVALID COLLECTION ID"
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     return originalString.replaceAll(FIND_VARIABLE_REGEX, (_, match) => collectionVariables[match])
 }
