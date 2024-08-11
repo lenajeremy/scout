@@ -42,7 +42,7 @@ export async function getResponseData<T>(res: Response): Promise<{ type: Respons
     contentType.includes('video') ||
     contentType.includes('audio')
   ) {
-    let blob = await res.blob()
+    const blob = await res.blob()
     data = URL.createObjectURL(blob) as T
     type = contentType.includes('image') ? ResponseTypeEnum.image : contentType.includes('audio') ? ResponseTypeEnum.audio : ResponseTypeEnum.video
   } else {
@@ -118,7 +118,7 @@ export function buildSidebarStructure(c: Collection[], f: Folder[], r: Request[]
 }
 
 export function updateStoreFromCollection(postmanJSON: any, dispatch: AppDispatch) {
-  let collection: Collection = {
+  const collection: Collection = {
     name: postmanJSON.collection.info.name,
     id: postmanJSON.collection.info._postman_id,
     variables: postmanJSON.collection.variable || [],
@@ -126,8 +126,8 @@ export function updateStoreFromCollection(postmanJSON: any, dispatch: AppDispatc
     requestIds: []
   }
 
-  let folders: Folder[] = []
-  let requests: Request[] = []
+  const folders: Folder[] = []
+  const requests: Request[] = []
 
   postmanJSON.collection.item.forEach((item: any) => {
     buildItem(item)
@@ -135,7 +135,7 @@ export function updateStoreFromCollection(postmanJSON: any, dispatch: AppDispatc
 
   function buildItem(item: any, folderId = "") {
     if (item.request && item.response) {
-      let request: Request = {
+      const request: Request = {
         id: item.id,
         name: item.name,
         url: item.request.url?.raw || '',
@@ -157,7 +157,7 @@ export function updateStoreFromCollection(postmanJSON: any, dispatch: AppDispatc
 
       requests.push(request)
     } else {
-      let folder: Folder = {
+      const folder: Folder = {
         id: item.id,
         name: item.name,
         requestIds: [],

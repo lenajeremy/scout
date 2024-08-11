@@ -72,6 +72,10 @@ export function Sidebar() {
         const collectionJSON = await res.json()
         updateStoreFromCollection(collectionJSON, dispatch)
         setOpenModal(false)
+
+        toast.success("Postman collected imported successfully", {
+          description: "You can proceed to make requests!"
+        })
       } else {
         const error: {
             error: {
@@ -211,14 +215,14 @@ function SidebarCollectionComponent(props: SidebarCollection) {
     <>
       <div>
         <div
-          className={`py-1 px-2 ${
+          className={`py-1 px-2 rounded ${
             activeCollectionId === props.id
-              ? 'dark:bg-neutral-800 bg-neutral-100'
+              ? 'bg-accent'
               : ''
           } w-full text-left flex items-center justify-between`}
         >
           <button
-            className="flex gap-3 items-center w-full"
+            className="flex gap-3 items-center w-full rounded py-2"
             onClick={() => {
               setActiveCollection(dispatch, props.id)
               setOpen(!open)

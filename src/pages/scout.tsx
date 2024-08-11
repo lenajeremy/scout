@@ -64,7 +64,7 @@ export default function Scout() {
     <FormProvider {...formMethods}>
       <div className="grid grid-cols-[300px,_1px,_1fr,_1px,_64px] max-h-screen overflow-clip mx-auto">
         <Sidebar />
-        <div className="h-full w-full bg-neutral-200 dark:bg-neutral-700" />
+        <div className="h-full w-full bg-border" />
         {activeRequest ? (
           <RequestSection />
         ) : (
@@ -73,7 +73,7 @@ export default function Scout() {
           </div>
         )}
 
-        <div className="h-full w-full bg-neutral-200 dark:bg-neutral-700" />
+        <div className="h-full w-full bg-border" />
 
         <div className="mt-4 flex flex-col gap-2 ml-4">
           <ModeToggle />
