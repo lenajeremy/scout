@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { REQUEST_DEFAULT_VALUES } from "@/constants";
@@ -24,7 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import RequestSection from "@/components/request-section";
 
-export default function Home() {
+export default function Scout() {
   const formMethods = useForm<APIRequest>({
     defaultValues: REQUEST_DEFAULT_VALUES,
   });
@@ -46,6 +44,7 @@ export default function Home() {
       localStorage.getItem("requests") || "[]"
     );
     dispatch(bulkAddRequests(localStoredRequests));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
@@ -53,7 +52,8 @@ export default function Home() {
 
     console.log(activeRequest);
 
-    for (let [key, value] of Object.entries(activeRequest)) {
+    for (const [key, value] of Object.entries(activeRequest)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       formMethods.setValue(key, value);
     }
