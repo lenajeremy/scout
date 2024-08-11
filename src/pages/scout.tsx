@@ -44,6 +44,7 @@ export default function Scout() {
       localStorage.getItem("requests") || "[]"
     );
     dispatch(bulkAddRequests(localStoredRequests));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
@@ -51,7 +52,8 @@ export default function Scout() {
 
     console.log(activeRequest);
 
-    for (let [key, value] of Object.entries(activeRequest)) {
+    for (const [key, value] of Object.entries(activeRequest)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       formMethods.setValue(key, value);
     }
