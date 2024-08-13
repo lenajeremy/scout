@@ -15,6 +15,7 @@ const collectionsSlice = createSlice({
     reducers: {
         initCollections: (state, action: PayloadAction<typeof initialState>) => {
             state.collections = action.payload.collections || []
+            localStorage.setItem('collections', state.collections)
 
             if (!action.payload.activeCollectionId) {
                 state.activeCollectionId = state.collections.length === 0 ? "" : state.collections.at(state.collections.length - 1)?.id || ""
