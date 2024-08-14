@@ -168,7 +168,6 @@ export function updateStoreFromCollection(postmanJSON: any, dispatch: AppDispatc
 
       if (!folderId) {
         collection.folderIds.push(folder.id)
-        console.log(item.name)
       } else {
         folders.find(folder => folder.id === folderId)?.subFolderIds.push(folder.id)
       }

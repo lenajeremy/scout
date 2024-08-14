@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createListenerMiddleware, ListenerEffectAPI } from "@reduxjs/toolkit";
 import { Request } from "@/types/collection";
+import { AppDispatch, RootState } from "..";
 
 const initialState: Array<Request> = []
 
@@ -21,7 +22,7 @@ const requestsSlice = createSlice({
             state = filteredFolders
 
             filteredFolders.at(filteredFolders.length - 1)?.id || ""
-            
+
             return state;
         },
         editRequest: (state, action: PayloadAction<Request>) => {
@@ -34,11 +35,25 @@ const requestsSlice = createSlice({
     }
 })
 
-export default requestsSlice.reducer
-export const { 
-    addRequest, 
+export const requestMiddleware = createListenerMiddleware<RootState, AppDispatch>()
+
+function updateLocalStorage(listenerApi: ListenerEffectAPI<RootState, AppDispatch>) {
+    const requests = listenerApi.getState().requests;
+    localStorage.setItem("REQUESTS", JSON.stringify(requests))
+}
+
+Object.values(requestsSlice.actions).forEach(action => requestMiddleware.startListening({
+    actionCreator: action,
+    effect: async (_, listenerApi) => updateLocalStorage(listenerApi)
+}))
+
+
+export const {
+    addRequest,
     deleteRequest,
     editRequest,
     bulkAddRequests,
     deleteRequestsInCollection
 } = requestsSlice.actions
+
+export default requestsSlice.reducer

@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createListenerMiddleware, createSlice, ListenerEffectAPI, PayloadAction } from "@reduxjs/toolkit";
 import { Folder } from "@/types/collection";
+import { AppDispatch, RootState } from "..";
 
 
 const initialState: {
@@ -14,7 +15,7 @@ const foldersSlice = createSlice({
     name: 'foldersSlice',
     initialState,
     reducers: {
-        bulkAddFolders: (state, action: PayloadAction<Array<Folder>>) => {
+        bulkAddFolders: (state, action: PayloadAction<Folder[]>) => {
             state.folders = [...state.folders, ...action.payload]
             state.activeFolderId = action.payload.length === 0 ? "" : action.payload.at(action.payload.length - 1)?.id || ""
 
@@ -67,6 +68,19 @@ const foldersSlice = createSlice({
         }
     }
 })
+
+export const folderMiddleware = createListenerMiddleware<RootState, AppDispatch>()
+
+function updateLocalStorage(listenerApi: ListenerEffectAPI<RootState, AppDispatch>) {
+    const requests = listenerApi.getState().folders.folders;
+    localStorage.setItem("FOLDERS", JSON.stringify(requests))
+}
+
+Object.values(foldersSlice.actions).forEach(action => folderMiddleware.startListening({
+    actionCreator: action,
+    effect: async (_, listenerApi) => updateLocalStorage(listenerApi)
+}))
+
 
 export default foldersSlice.reducer
 export const {

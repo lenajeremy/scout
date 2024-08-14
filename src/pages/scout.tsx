@@ -2,7 +2,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { REQUEST_DEFAULT_VALUES } from "@/constants";
 import { FormProvider, useForm } from "react-hook-form";
-import { APIRequest, Request } from "@/types/collection";
+import { APIRequest, Collection, Folder, Request } from "@/types/collection";
 import {
   createNewCollection,
   createNewFolder,
@@ -12,7 +12,12 @@ import { Sidebar } from "@/components/sidebar";
 import { ModeToggle } from "@/components/ui/theme-switcher";
 import { PlusCircledIcon } from "@radix-ui/react-icons";
 import { useAppDispatch, useAppSelector } from "@/store";
-import { bulkAddRequests } from "@/store/actions";
+import {
+  bulkAddRequests,
+  bulkAddCollections,
+  bulkAddRequestTabs,
+  bulkAddFolders,
+} from "@/store/actions";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -40,10 +45,27 @@ export default function Scout() {
   const dispatch = useAppDispatch();
 
   React.useEffect(() => {
-    const localStoredRequests: Array<Request> = JSON.parse(
-      localStorage.getItem("requests") || "[]"
+
+    console.log('inserting')
+    
+    const localRequests: Request[] = JSON.parse(
+      localStorage.getItem("REQUESTS") || "[]"
     );
-    dispatch(bulkAddRequests(localStoredRequests));
+    const localCollections: Collection[] = JSON.parse(
+      localStorage.getItem("COLLECTIONS") || "[]"
+    );
+    const localFolders: Folder[] = JSON.parse(
+      localStorage.getItem("FOLDERS") || "[]"
+    );
+    const localRequestTabs: { id: string; name: string }[] = JSON.parse(
+      localStorage.getItem("REQUEST_TABS") || "[]"
+    );
+
+    dispatch(bulkAddRequests(localRequests));
+    dispatch(bulkAddCollections(localCollections));
+    dispatch(bulkAddRequestTabs(localRequestTabs));
+    dispatch(bulkAddFolders(localFolders));
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

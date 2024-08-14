@@ -1,5 +1,6 @@
 import { Collection } from "@/types/collection";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createListenerMiddleware, createSlice, ListenerEffectAPI, PayloadAction } from "@reduxjs/toolkit";
+import { AppDispatch, RootState } from "..";
 
 const initialState: {
     collections: Array<Collection>,
@@ -13,14 +14,10 @@ const collectionsSlice = createSlice({
     name: "collectionsSlice",
     initialState,
     reducers: {
-        initCollections: (state, action: PayloadAction<typeof initialState>) => {
-            state.collections = action.payload.collections || []
-            localStorage.setItem('collections', JSON.stringify(state.collections))
-
-            if (!action.payload.activeCollectionId) {
-                state.activeCollectionId = state.collections.length === 0 ? "" : state.collections.at(state.collections.length - 1)?.id || ""
-            }
-
+        bulkAddCollections: (state, action: PayloadAction<Collection[]>) => {
+            state.collections = action.payload || []
+            state.activeCollectionId = state.collections.length === 0 ? "" : state.collections.at(state.collections.length - 1)?.id || ""
+            
             return state
         },
         createCollection: (state, action: PayloadAction<Collection>) => {
@@ -66,9 +63,22 @@ const collectionsSlice = createSlice({
     }
 })
 
+export const collectionsMiddleware = createListenerMiddleware<RootState, AppDispatch>()
+
+function updateLocalStorage(listenerApi: ListenerEffectAPI<RootState, AppDispatch>) {
+    const collections = listenerApi.getState().collections.collections;
+    localStorage.setItem("COLLECTIONS", JSON.stringify(collections))
+}
+
+Object.values(collectionsSlice.actions).forEach(action => collectionsMiddleware.startListening({
+    actionCreator: action,
+    effect: async (_, listenerApi) => updateLocalStorage(listenerApi)
+}))
+
+
 export default collectionsSlice.reducer
 export const {
-    initCollections,
+    bulkAddCollections,
     createCollection,
     deleteCollection,
     editCollection,

@@ -41,7 +41,7 @@ export default function RequestSection() {
 
   const [loading, setLoading] = React.useState<boolean>(false);
 
-  const urlRef = React.useRef(formMethods.getValues("url"));
+  const [url, setUrl] = React.useState(formMethods.getValues('url'))
   const activeRequestId = useAppSelector((store) => store.tabs.activeTabId);
   const activeRequest = useAppSelector((store) => store.requests).find(
     (r) => r.id === activeRequestId
@@ -49,7 +49,7 @@ export default function RequestSection() {
 
   React.useEffect(() => {
     if (activeRequest) {
-      urlRef.current = activeRequest.url;
+      setUrl(activeRequest.url)
     }
   }, [activeRequestId]);
 
@@ -140,7 +140,7 @@ export default function RequestSection() {
           />
 
           <VariableInput
-            intialValue={urlRef.current}
+            intialValue={url}
             // onChange={(url) => console.log(url)}
             onChange={onUrlInput}
           />
