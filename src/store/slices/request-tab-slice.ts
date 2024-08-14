@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createListenerMiddleware, createSlice, ListenerEffectAPI, PayloadAction } from "@reduxjs/toolkit";
+import { AppDispatch, RootState } from "..";
 
 type TabsInitialStateType = {
     tabs: Array<{
@@ -17,7 +18,7 @@ const requestTabsSlice = createSlice({
     name: 'requestTabsSlice',
     initialState: tabsInitialState,
     reducers: {
-        initRequestsTabs: (state, action: PayloadAction<TabsInitialStateType['tabs']>) => {
+        bulkAddRequestTabs: (state, action: PayloadAction<TabsInitialStateType['tabs']>) => {
             state.tabs = action.payload
             state.activeTabId = action.payload.at(action.payload.length - 1)?.id || ''
 
@@ -49,9 +50,22 @@ const requestTabsSlice = createSlice({
     }
 })
 
+export const requestTabMiddleware = createListenerMiddleware<RootState, AppDispatch>()
+
+function updateLocalStorage(listenerApi: ListenerEffectAPI<RootState, AppDispatch>) {
+    const requests = listenerApi.getState().tabs.tabs;
+    localStorage.setItem("REQUEST_TABS", JSON.stringify(requests))
+}
+
+Object.values(requestTabsSlice.actions).forEach(action => requestTabMiddleware.startListening({
+    actionCreator: action,
+    effect: async (_, listenerApi) => updateLocalStorage(listenerApi)
+}))
+
+
 export default requestTabsSlice.reducer
 export const { 
-    initRequestsTabs,
+    bulkAddRequestTabs,
     addRequestTab,
     removeRequestTab
 } = requestTabsSlice.actions

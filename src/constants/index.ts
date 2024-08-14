@@ -40,7 +40,7 @@ export const REQUEST_DEFAULT_VALUES: Omit<APIRequest, "id"> = {
     params: [{ key: '', value: '', description: '' }],
     formData: [{ key: '', value: '', description: '', type: 'text' }],
     bodyType: RequestBodyEnum.none,
-    jsonBody: `{}`,
+    jsonBody: ``,
     headers: [{ key: 'Accept', value: '*/*' }],
     response: undefined,
 }
