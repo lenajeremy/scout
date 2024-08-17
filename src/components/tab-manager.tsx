@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
-import { DialogDescription, DialogTrigger } from "@radix-ui/react-dialog";
+import { DialogDescription } from "@radix-ui/react-dialog";
 import { Button } from "./ui/button";
 import { useFormContext } from "react-hook-form";
 import { APIRequest } from "@/types/collection";
