@@ -67,7 +67,9 @@ const collectionsSlice = createSlice({
                 for (let v of action.payload.variables) {
                     let colVar = col.variables.find(cv => cv.key === v.key)
                     if (colVar) {
-                        colVar.value == v.value
+                        colVar.value = v.value
+                    } else {
+                        col.variables.push(v)
                     }
                 }
             }
