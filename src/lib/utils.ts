@@ -1,4 +1,4 @@
-import { Collection, Folder, ResponseTypeEnum, Request, RequestMethod } from "@/types/collection";
+import { Collection, Folder, ResponseTypeEnum, Request, RequestMethod, RequestWithSavedState } from "@/types/collection";
 import { SidebarCollection, SidebarFolder } from '@/types/sidebar'
 import { RequestBodyEnum, RequestHeadersType } from "@/types/form";
 import { type ClassValue, clsx } from "clsx"
@@ -77,7 +77,7 @@ export function prepareHeaders(headers: RequestHeadersType): Record<string, stri
   return map;
 }
 
-function buildFolder(folderId: string, f: Folder[], r: Request[], collectionId = ''): SidebarFolder {
+function buildFolder(folderId: string, f: Folder[], r: RequestWithSavedState[], collectionId = ''): SidebarFolder {
   const folder = f.find(f => f.id == folderId)!
 
   const folderToReturn: SidebarFolder = {
@@ -92,7 +92,7 @@ function buildFolder(folderId: string, f: Folder[], r: Request[], collectionId =
   return folderToReturn
 }
 
-export function buildSidebarStructure(c: Collection[], f: Folder[], r: Request[]): SidebarCollection[] {
+export function buildSidebarStructure(c: Collection[], f: Folder[], r: RequestWithSavedState[]): SidebarCollection[] {
   let _collections: SidebarCollection[] = c.map(c => ({
     id: c.id,
     name: c.name,
@@ -127,7 +127,7 @@ export function updateStoreFromCollection(postmanJSON: any, dispatch: AppDispatc
   }
 
   const folders: Folder[] = []
-  const requests: Request[] = []
+  const requests: RequestWithSavedState[] = []
 
   postmanJSON.collection.item.forEach((item: any) => {
     buildItem(item)
@@ -135,7 +135,7 @@ export function updateStoreFromCollection(postmanJSON: any, dispatch: AppDispatc
 
   function buildItem(item: any, folderId = "") {
     if (item.request && item.response) {
-      const request: Request = {
+      const request: RequestWithSavedState = {
         id: item.id,
         name: item.name,
         url: item.request.url?.raw || '',
@@ -146,7 +146,8 @@ export function updateStoreFromCollection(postmanJSON: any, dispatch: AppDispatc
         jsonBody: item.request.body?.raw || "",
         headers: item.request.header.map((h: any) => ({ key: h.key, value: h.value })),
         collectionId: collection.id,
-        folderId: folderId
+        folderId: folderId,
+        isUpdated: true
       }
 
       if (!folderId) {
@@ -188,6 +189,10 @@ export function createNewCollection(actor: AppDispatch) {
   actor(createCollection(newCollection))
 }
 
+// export function deleteRequests(actor: AppDispatch, requestIds: string[], folderId) {
+  
+// }
+
 export function deleteCollection(actor: AppDispatch, collectionId: string) {
   actor(deleteRequestsInCollection(collectionId))
   actor(deleteFoldersInCollection(collectionId))
@@ -210,10 +215,10 @@ export function createNewRequest(actor: AppDispatch, collectionId: string, folde
     ...REQUEST_DEFAULT_VALUES,
     id: uuid(),
     folderId,
-    collectionId
+    collectionId,
   }
 
-  actor(addRequest(newRequest))
+  actor(addRequest({...newRequest, isUpdated: true}))
   actor(addRequestToFolder({
     folderId,
     requestId: newRequest.id

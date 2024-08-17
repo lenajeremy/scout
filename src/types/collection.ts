@@ -65,6 +65,10 @@ export type Request = APIRequest & {
     folderId: string,
 }
 
+export type RequestWithSavedState = Request & {
+    isUpdated: boolean
+}
+
 
 /**
  * Groups of requests and folders. Contains variables and 

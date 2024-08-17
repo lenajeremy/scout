@@ -2,7 +2,12 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { REQUEST_DEFAULT_VALUES } from "@/constants";
 import { FormProvider, useForm } from "react-hook-form";
-import { APIRequest, Collection, Folder, Request } from "@/types/collection";
+import {
+  APIRequest,
+  Collection,
+  Folder,
+  RequestWithSavedState,
+} from "@/types/collection";
 import {
   createNewCollection,
   createNewFolder,
@@ -35,50 +40,62 @@ export default function Scout() {
   const { activeTabId } = useAppSelector((store) => store.tabs);
   const { activeCollectionId } = useAppSelector((store) => store.collections);
   const { activeFolderId } = useAppSelector((store) => store.folders);
-
   const requests = useAppSelector((store) => store.requests);
-  const activeRequest = React.useMemo(
-    () => requests.find((r) => r.id === activeTabId),
-    [requests, activeTabId]
-  );
+  const activeRequest = requests.find((r) => r.id === activeTabId);
 
   const dispatch = useAppDispatch();
+  const hasLoadedRef = React.useRef(false);
 
   React.useEffect(() => {
+    if (!hasLoadedRef.current) {
+      const localRequests: RequestWithSavedState[] = JSON.parse(
+        localStorage.getItem("REQUESTS") || "[]"
+      );
+      const localCollections: Collection[] = JSON.parse(
+        localStorage.getItem("COLLECTIONS") || "[]"
+      );
+      const localFolders: Folder[] = JSON.parse(
+        localStorage.getItem("FOLDERS") || "[]"
+      );
+      const localRequestTabs: string[] = JSON.parse(
+        localStorage.getItem("REQUEST_TABS") || "[]"
+      );
 
-    console.log('inserting')
-    
-    const localRequests: Request[] = JSON.parse(
-      localStorage.getItem("REQUESTS") || "[]"
-    );
-    const localCollections: Collection[] = JSON.parse(
-      localStorage.getItem("COLLECTIONS") || "[]"
-    );
-    const localFolders: Folder[] = JSON.parse(
-      localStorage.getItem("FOLDERS") || "[]"
-    );
-    const localRequestTabs: { id: string; name: string }[] = JSON.parse(
-      localStorage.getItem("REQUEST_TABS") || "[]"
-    );
+      dispatch(bulkAddRequests(localRequests));
+      dispatch(bulkAddCollections(localCollections));
+      dispatch(bulkAddRequestTabs(localRequestTabs));
+      dispatch(bulkAddFolders(localFolders));
 
-    dispatch(bulkAddRequests(localRequests));
-    dispatch(bulkAddCollections(localCollections));
-    dispatch(bulkAddRequestTabs(localRequestTabs));
-    dispatch(bulkAddFolders(localFolders));
+      hasLoadedRef.current = true
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
-    if (!activeRequest) return;
-
-    for (const [key, value] of Object.entries(activeRequest)) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      formMethods.setValue(key, value);
+    if (!activeRequest) {
+      formMethods.setValue("name", REQUEST_DEFAULT_VALUES.name);
+      formMethods.setValue("url", REQUEST_DEFAULT_VALUES.url);
+      formMethods.setValue("method", REQUEST_DEFAULT_VALUES.method);
+      formMethods.setValue("params", REQUEST_DEFAULT_VALUES.params);
+      formMethods.setValue("formData", REQUEST_DEFAULT_VALUES.formData);
+      formMethods.setValue("bodyType", REQUEST_DEFAULT_VALUES.bodyType);
+      formMethods.setValue("jsonBody", REQUEST_DEFAULT_VALUES.jsonBody);
+      formMethods.setValue("headers", REQUEST_DEFAULT_VALUES.headers);
+      formMethods.setValue("response", REQUEST_DEFAULT_VALUES.response);
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeRequest]);
+
+    formMethods.setValue("name", activeRequest.name);
+    formMethods.setValue("url", activeRequest.url);
+    formMethods.setValue("method", activeRequest.method);
+    formMethods.setValue("params", activeRequest.params);
+    formMethods.setValue("formData", activeRequest.formData);
+    formMethods.setValue("bodyType", activeRequest.bodyType);
+    formMethods.setValue("jsonBody", activeRequest.jsonBody);
+    formMethods.setValue("headers", activeRequest.headers);
+    formMethods.setValue("response", activeRequest.response);
+  }, [activeTabId]);
 
   return (
     <FormProvider {...formMethods}>
