@@ -29,7 +29,6 @@ function VariableInput(props: VariableInputProps) {
   const cursorPositionRef = React.useRef(0);
 
   const handleInputChange = (e: React.FormEvent<HTMLDivElement>) => {
-    console.log(e)
     const currentCursorPosition = getCaretPosition();
     cursorPositionRef.current = currentCursorPosition;
 
@@ -66,7 +65,8 @@ function VariableInput(props: VariableInputProps) {
   });
 
   React.useEffect(() => {
-    if (props.intialValue) updateInnerHTML(props.intialValue);
+    // if (props.intialValue) updateInnerHTML(props.intialValue);
+    updateInnerHTML(props.intialValue || "")
   }, [props.intialValue]);
 
   const getCaretPosition = () => {

@@ -1,11 +1,11 @@
-import * as React from 'react'
+import * as React from "react";
 import {
   BackpackIcon,
   ChevronRightIcon,
   TrashIcon,
-} from '@radix-ui/react-icons'
-import { useAppDispatch, useAppSelector } from '@/store'
-import { addRequestTab } from '@/store/actions'
+} from "@radix-ui/react-icons";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { addRequestTab } from "@/store/actions";
 import {
   buildSidebarStructure,
   createNewFolder,
@@ -14,16 +14,16 @@ import {
   setActiveCollection,
   setActiveFolder,
   updateStoreFromCollection,
-} from '@/lib/utils'
-import { SidebarCollection, SidebarFolder } from '@/types/sidebar'
-import { Request } from '@/types/collection'
-import { Button } from './ui/button'
+} from "@/lib/utils";
+import { SidebarCollection, SidebarFolder } from "@/types/sidebar";
+import { RequestWithSavedState } from "@/types/collection";
+import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu'
+} from "./ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -32,70 +32,70 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './ui/dialog'
-import { Label } from './ui/label'
-import { Input } from './ui/input'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import { toast } from 'sonner'
+} from "./ui/dialog";
+import { Label } from "./ui/label";
+import { Input } from "./ui/input";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export function Sidebar() {
-  const requests = useAppSelector((store) => store.requests)
-  const { collections } = useAppSelector((store) => store.collections)
-  const { folders } = useAppSelector((store) => store.folders)
-  const dispatch = useAppDispatch()
-  const [openModal, setOpenModal] = React.useState(false)
+  const requests = useAppSelector((store) => store.requests);
+  const { collections } = useAppSelector((store) => store.collections);
+  const { folders } = useAppSelector((store) => store.folders);
+  const dispatch = useAppDispatch();
+  const [openModal, setOpenModal] = React.useState(false);
 
   const repoStructure = React.useMemo(
     () => buildSidebarStructure(collections, folders, requests),
-    [collections, folders, requests],
-  )
+    [collections, folders, requests]
+  );
   const { handleSubmit, register } = useForm<{
-    collectionUrl: string
-    type: 'postman' | 'swagger'
+    collectionUrl: string;
+    type: "postman" | "swagger";
   }>({
     defaultValues: {
-      type: 'postman',
-      collectionUrl: '',
+      type: "postman",
+      collectionUrl: "",
     },
-  })
+  });
 
-  const [loading, setLoading] = React.useState(false)
+  const [loading, setLoading] = React.useState(false);
 
   const importPostmanCollectionFromURL: SubmitHandler<{
-    collectionUrl: string
+    collectionUrl: string;
   }> = React.useCallback(async (values) => {
     try {
-      setLoading(true)
-      const res = await fetch(values.collectionUrl)
+      setLoading(true);
+      const res = await fetch(values.collectionUrl);
 
       if (res.status === 200) {
-        const collectionJSON = await res.json()
-        updateStoreFromCollection(collectionJSON, dispatch)
-        setOpenModal(false)
+        const collectionJSON = await res.json();
+        updateStoreFromCollection(collectionJSON, dispatch);
+        setOpenModal(false);
 
         toast.success("Postman collected imported successfully", {
-          description: "You can proceed to make requests!"
-        })
+          description: "You can proceed to make requests!",
+        });
       } else {
         const error: {
-            error: {
-                name: string,
-                message: string
-            }
-        } = await res.json()
-        
-        toast.error('Unable to import Postman collection', {
+          error: {
+            name: string;
+            message: string;
+          };
+        } = await res.json();
+
+        toast.error("Unable to import Postman collection", {
           description: error.error.message,
-        })
+        });
       }
     } catch (error) {
-      toast.error('Unable to import Postman collection', { 
-        description: (error as Error).message
-      })
+      toast.error("Unable to import Postman collection", {
+        description: (error as Error).message,
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [])
+  }, []);
 
   return (
     <div className="p-4 pr-0 flex flex-col justify-between text-sm h-screen">
@@ -153,7 +153,7 @@ export function Sidebar() {
       <div className="flex flex-col gap-2 justify-end pr-4">
         <Dialog open={openModal} onOpenChange={setOpenModal}>
           <DialogTrigger asChild>
-            <Button variant={'secondary'}>Import from Postman </Button>
+            <Button variant={"secondary"}>Import from Postman </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
@@ -171,7 +171,7 @@ export function Sidebar() {
                   id="postmanCollectionUrl"
                   className="col-span-3"
                   type="url"
-                  {...register('collectionUrl', { required: true })}
+                  {...register("collectionUrl", { required: true })}
                 />
               </div>
               <DialogFooter>
@@ -190,8 +190,8 @@ export function Sidebar() {
 
         <Button
           onClick={() =>
-            toast.message('Importing from Swagger', {
-              description: 't his is being imported',
+            toast.message("Importing from Swagger", {
+              description: "t his is being imported",
             })
           }
         >
@@ -199,38 +199,34 @@ export function Sidebar() {
         </Button>
       </div>
     </div>
-  )
+  );
 }
 
 function SidebarCollectionComponent(props: SidebarCollection) {
-  const dispatch = useAppDispatch()
-  const { activeCollectionId } = useAppSelector((store) => store.collections)
-  const [open, setOpen] = React.useState(true)
-  const [
-    deleteCollectionDialogOpen,
-    setDeleteCollectionDialogOopen,
-  ] = React.useState(false)
+  const dispatch = useAppDispatch();
+  const { activeCollectionId } = useAppSelector((store) => store.collections);
+  const [open, setOpen] = React.useState(true);
+  const [deleteCollectionDialogOpen, setDeleteCollectionDialogOopen] =
+    React.useState(false);
 
   return (
     <>
       <div>
         <div
           className={`py-1 px-2 rounded ${
-            activeCollectionId === props.id
-              ? 'bg-accent'
-              : ''
+            activeCollectionId === props.id ? "bg-accent" : ""
           } w-full text-left flex items-center justify-between`}
         >
           <button
             className="flex gap-3 items-center w-full rounded py-2"
             onClick={() => {
-              setActiveCollection(dispatch, props.id)
-              setOpen(!open)
+              setActiveCollection(dispatch, props.id);
+              setOpen(!open);
             }}
           >
             <ChevronRightIcon
               className={`transform duration-300 ${
-                open ? 'rotate-90' : 'rotate-0'
+                open ? "rotate-90" : "rotate-0"
               }`}
             />
             {props.name}
@@ -238,7 +234,7 @@ function SidebarCollectionComponent(props: SidebarCollection) {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant={'ghost'} size="icon" className="h-7 w-7">
+              <Button variant={"ghost"} size="icon" className="h-7 w-7">
                 <svg
                   width="16"
                   height="16"
@@ -257,23 +253,23 @@ function SidebarCollectionComponent(props: SidebarCollection) {
             <DropdownMenuContent>
               <DropdownMenuItem>Share</DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => createNewFolder(dispatch, props.id, '')}
+                onClick={() => createNewFolder(dispatch, props.id, "")}
               >
                 New Folder
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => createNewRequest(dispatch, props.id, '')}
+                onClick={() => createNewRequest(dispatch, props.id, "")}
               >
                 New Request
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Button
-                  variant={'destructive'}
+                  variant={"destructive"}
                   className="w-full justify-start"
                   onClick={() => {
                     setTimeout(() => {
-                      setDeleteCollectionDialogOopen(true)
-                    }, 20)
+                      setDeleteCollectionDialogOopen(true);
+                    }, 20);
                   }}
                 >
                   <TrashIcon className="mr-2 h-4 w-4" />
@@ -296,9 +292,9 @@ function SidebarCollectionComponent(props: SidebarCollection) {
               <div className="h-full p-4 space-y-2">
                 <p className="text-sm text-center">Collection is empty.</p>
                 <Button
-                  onClick={() => createNewRequest(dispatch, props.id, '')}
+                  onClick={() => createNewRequest(dispatch, props.id, "")}
                   className="mx-auto flex"
-                  size={'sm'}
+                  size={"sm"}
                 >
                   Add Request
                 </Button>
@@ -322,10 +318,10 @@ function SidebarCollectionComponent(props: SidebarCollection) {
 
           <DialogFooter>
             <Button
-              variant={'destructive'}
+              variant={"destructive"}
               onClick={() => {
-                deleteCollection(dispatch, props.id)
-                setDeleteCollectionDialogOopen(false)
+                deleteCollection(dispatch, props.id);
+                setDeleteCollectionDialogOopen(false);
               }}
               className="w-full"
             >
@@ -335,12 +331,12 @@ function SidebarCollectionComponent(props: SidebarCollection) {
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }
 
 function SidebarFolderComponent(folder: SidebarFolder) {
-  const dispatch = useAppDispatch()
-  const [open, setOpen] = React.useState(false)
+  const dispatch = useAppDispatch();
+  const [open, setOpen] = React.useState(false);
 
   return (
     <div>
@@ -348,13 +344,13 @@ function SidebarFolderComponent(folder: SidebarFolder) {
         <button
           className="flex gap-3 items-center"
           onClick={() => {
-            setActiveFolder(dispatch, folder.id, folder.collectionId)
-            setOpen(!open)
+            setActiveFolder(dispatch, folder.id, folder.collectionId);
+            setOpen(!open);
           }}
         >
           <ChevronRightIcon
             className={`transform duration-300 ${
-              open ? 'rotate-90' : 'rotate-0'
+              open ? "rotate-90" : "rotate-0"
             }`}
           />
           <div className="flex gap-1 items-center">
@@ -365,7 +361,7 @@ function SidebarFolderComponent(folder: SidebarFolder) {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant={'ghost'} size="icon" className="w-8 h-6">
+            <Button variant={"ghost"} size="icon" className="w-8 h-6">
               <svg
                 width="16"
                 height="16"
@@ -413,32 +409,37 @@ function SidebarFolderComponent(folder: SidebarFolder) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-function SidebarRequestComponent(request: Request) {
-  const { activeTabId } = useAppSelector((store) => store.tabs)
-  const dispatch = useAppDispatch()
+function SidebarRequestComponent(request: RequestWithSavedState) {
+  const { activeTabId } = useAppSelector((store) => store.tabs);
+  const dispatch = useAppDispatch();
   return (
     <div
       key={request.id}
       className={`relative my-2 after:absolute after:-left-2 after:h-full after:w-0.5 after:top-0 after:bg-transparent after:duration-200 ${
-        request.id === activeTabId ? 'after:bg-[#0085FF]' : 'border-transparent'
+        request.id === activeTabId ? "after:bg-[#0085FF]" : "border-transparent"
       }`}
     >
       <button
         className="flex items-center gap-1 text-sm overflow-hidden whitespace-nowrap w-full text-left"
         onClick={() =>
-          dispatch(addRequestTab({ name: request.name, id: request.id }))
+          dispatch(addRequestTab(request.id))
         }
       >
         <p className="w-full text-ellipsis overflow-hidden">
-          <span className={`text-[#0085FF] w-10 text-xs text-left mr-2`}>
+          <span
+            className={`text-[#0085FF] w-10 text-xs text-left mr-2 uppercase`}
+          >
             {request.method}
           </span>
           <span>{request.name}</span>
+          {!request.isUpdated && (
+            <span className="w-6 h-6 rounded-full bg-yellow-700">saved</span>
+          )}
         </p>
       </button>
     </div>
-  )
+  );
 }

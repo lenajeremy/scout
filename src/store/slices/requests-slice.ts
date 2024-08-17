@@ -1,31 +1,29 @@
 import { createSlice, PayloadAction, createListenerMiddleware, ListenerEffectAPI } from "@reduxjs/toolkit";
-import { Request } from "@/types/collection";
+import { RequestWithSavedState } from "@/types/collection";
 import { AppDispatch, RootState } from "..";
 
-const initialState: Array<Request> = []
+const initialState: RequestWithSavedState[] = []
 
 const requestsSlice = createSlice({
     name: 'requestsSlice',
     initialState,
     reducers: {
-        bulkAddRequests: (state, action: PayloadAction<Array<Request>>) => {
+        bulkAddRequests: (state, action: PayloadAction<RequestWithSavedState[]>) => {
             return [...state, ...action.payload]
         },
-        addRequest: (state, action: PayloadAction<Request>) => {
+        addRequest: (state, action: PayloadAction<RequestWithSavedState>) => {
             return [...state, action.payload]
         },
         deleteRequest: (state, action: PayloadAction<string>) => {
             return state.filter(r => r.id !== action.payload)
         },
         deleteRequestsInCollection: (state, action: PayloadAction<string>) => {
-            const filteredFolders = state.filter(r => r.collectionId !== action.payload)
-            state = filteredFolders
-
-            filteredFolders.at(filteredFolders.length - 1)?.id || ""
-
-            return state;
+            return state.filter(r => r.collectionId !== action.payload)
         },
-        editRequest: (state, action: PayloadAction<Request>) => {
+        deleteRequestsInFolder: (state, action: PayloadAction<string>) => {
+            return state.filter(r => r.folderId !== action.payload)
+        },
+        editRequest: (state, action: PayloadAction<RequestWithSavedState>) => {
             const requestToEditIndex = state.findIndex(r => r.id === action.payload.id)
             if (requestToEditIndex !== -1) {
                 state[requestToEditIndex] = action.payload;
@@ -53,7 +51,8 @@ export const {
     deleteRequest,
     editRequest,
     bulkAddRequests,
-    deleteRequestsInCollection
+    deleteRequestsInCollection,
+    deleteRequestsInFolder
 } = requestsSlice.actions
 
 export default requestsSlice.reducer
