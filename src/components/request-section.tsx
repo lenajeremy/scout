@@ -19,7 +19,10 @@ import { RequestBodyForm } from "./requestbodyform";
 import { RequestHeadersForm } from "./requestheadersform";
 import MonacoEditor from "@monaco-editor/react";
 import { useTheme } from "next-themes";
-import { useAppSelector } from "@/store";
+import { useAppDispatch, useAppSelector } from "@/store";
+import { useListenForSave as useListenForSaveKeyPress } from "@/hooks/useListenForSave";
+import useWatchRequestUpdateState from "@/hooks/useWatchRequestUpdateState";
+import { editRequest } from "@/store/actions";
 
 type WithoutPromise<T> = T extends Promise<infer T> ? T : never;
 
@@ -41,20 +44,40 @@ export default function RequestSection() {
 
   const [loading, setLoading] = React.useState<boolean>(false);
 
-  const [url, setUrl] = React.useState(formMethods.getValues('url'))
+  const [url, setUrl] = React.useState(formMethods.getValues("url"));
   const activeRequestId = useAppSelector((store) => store.tabs.activeTabId);
   const activeRequest = useAppSelector((store) => store.requests).find(
     (r) => r.id === activeRequestId
-  );
+  )!;
+  const dispatch = useAppDispatch();
 
   React.useEffect(() => {
     if (activeRequest) {
-      setUrl(activeRequest.url)
+      setUrl(activeRequest.url);
     }
-  }, [activeRequestId]);
+  }, [activeRequest]);
+
+  // listens for the save key combination and runs the callback
+  useListenForSaveKeyPress(() => {
+    dispatch(
+      editRequest({
+        ...activeRequest,
+        ...formMethods.getValues(),
+        isUpdated: true,
+      })
+    );
+  }, [activeRequest]);
+
+  useWatchRequestUpdateState({
+    callbackIfMatches() {
+      dispatch(editRequest({ ...activeRequest, isUpdated: true }));
+    },
+    callbackIfNotMatches() {
+      dispatch(editRequest({ ...activeRequest, isUpdated: false }));
+    },
+  });
 
   const makeRequest: SubmitHandler<APIRequest> = async (data) => {
-    console.log(data)
     setLoading(true);
 
     const headers = prepareHeaders(data.headers);
@@ -139,11 +162,7 @@ export default function RequestSection() {
             defaultValue={formMethods.getValues("method").toUpperCase()}
           />
 
-          <VariableInput
-            intialValue={url}
-            // onChange={(url) => console.log(url)}
-            onChange={onUrlInput}
-          />
+          <VariableInput intialValue={url} onChange={onUrlInput} />
 
           <Input
             type="text"
