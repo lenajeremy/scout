@@ -1,4 +1,4 @@
-import { Collection } from "@/types/collection";
+import { Collection, Variable } from "@/types/collection";
 import { createListenerMiddleware, createSlice, ListenerEffectAPI, PayloadAction } from "@reduxjs/toolkit";
 import { AppDispatch, RootState } from "..";
 
@@ -17,7 +17,7 @@ const collectionsSlice = createSlice({
         bulkAddCollections: (state, action: PayloadAction<Collection[]>) => {
             state.collections = action.payload || []
             state.activeCollectionId = state.collections.length === 0 ? "" : state.collections.at(state.collections.length - 1)?.id || ""
-            
+
             return state
         },
         createCollection: (state, action: PayloadAction<Collection>) => {
@@ -59,6 +59,29 @@ const collectionsSlice = createSlice({
         setActiveCollection: (state, action: PayloadAction<string>) => {
             state.activeCollectionId = action.payload
             return state;
+        },
+        addVariablesToCollection: (state, action: PayloadAction<{ collectionId: string, variables: Variable[] }>) => {
+            const colIdx = state.collections.findIndex(c => c.id === action.payload.collectionId)
+            if (colIdx != -1) {
+                const col = state.collections[colIdx]
+                for (let v of action.payload.variables) {
+                    let colVar = col.variables.find(cv => cv.key === v.key)
+                    if (colVar) {
+                        colVar.value == v.value
+                    }
+                }
+            }
+            return state
+        },
+        removeVariableFromCollection: (state, action: PayloadAction<{ collectionId: string, variableKeys: string[] }>) => {
+            const colIdx = state.collections.findIndex(c => c.id === action.payload.collectionId)
+            if (colIdx != -1) {
+                const col = state.collections[colIdx]
+                for (let key of action.payload.variableKeys) {
+                    col.variables = col.variables.filter(v => v.key !== key)
+                }
+            }
+            return state
         }
     }
 })
@@ -84,5 +107,7 @@ export const {
     editCollection,
     addFolderToCollection,
     addRequestToCollection,
+    addVariablesToCollection,
+    removeVariableFromCollection,
     setActiveCollection: setActiveCollectionAction,
 } = collectionsSlice.actions
